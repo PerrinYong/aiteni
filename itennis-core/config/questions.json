@@ -421,7 +421,7 @@
     {
       "id": "Q12",
       "dimension": "training",
-      "weight": 0.8,
+      "weight": 0.5,
       "text": "过去 12 个月里，你的网球训练背景和打球频率更接近哪一种？",
       "options": [
         {
@@ -447,12 +447,12 @@
         {
           "id": "Q12_A5",
           "text": "曾在校队、俱乐部青训等体系接受过系统训练（即使现在不是高频率训练）",
-          "center_level": 5.0
+          "center_level": 4.5
         },
         {
           "id": "Q12_A6",
           "text": "曾在市队、省队等专业体系训练，或参加过国家/国际级别比赛",
-          "center_level": 6.0
+          "center_level": 5.0
         }
       ]
     }
