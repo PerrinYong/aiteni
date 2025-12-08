@@ -246,20 +246,6 @@ class ConfigManager:
         texts = knowledge.get("relative_evaluation_texts", {})
         return texts.get(evaluation_type, "")
     
-    def get_training_base_suggestion(self, dimension: str) -> str:
-        """
-        获取基础训练建议
-        
-        Args:
-            dimension: 维度名称
-            
-        Returns:
-            训练建议
-        """
-        knowledge = self.load_tennis_knowledge()
-        suggestions = knowledge.get("training_base_suggestions", {})
-        return suggestions.get(dimension, f"加强{self.get_dimension_name(dimension)}训练")
-    
     def get_dimension_suggestion(self, dimension: str, score: float) -> str:
         """
         根据维度和分数获取详细建议

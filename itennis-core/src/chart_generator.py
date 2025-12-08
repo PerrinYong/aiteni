@@ -10,7 +10,7 @@ import math
 
 from data_models import (
     ChartData, RadarChartData, BarChartGroup, DimensionBarData, 
-    PriorityItem, DimensionTag, EvaluateResult, NTRPConstants
+    DimensionTag, EvaluateResult, NTRPConstants
 )
 
 
@@ -41,17 +41,10 @@ class ChartGenerator:
             result.rounded_level
         )
         
-        # 生成训练优先级列表
-        priority_list = self._generate_priority_list(
-            result.dimension_scores,
-            result.rounded_level,
-            result.weaknesses
-        )
-        
         return ChartData(
             radar_data=radar_data,
             bar_groups=bar_groups,
-            priority_list=priority_list
+            priority_list=[]  # 简化为空列表，不再生成训练优先级列表
         )
     
     def _generate_radar_data(self, dimension_scores: Dict[str, float]) -> RadarChartData:
@@ -132,54 +125,6 @@ class ChartGenerator:
         
         return bar_groups
     
-    def _generate_priority_list(
-        self,
-        dimension_scores: Dict[str, float],
-        total_level: float,
-        weaknesses: List[str]
-    ) -> List[PriorityItem]:
-        """
-        生成训练优先级列表
-        
-        Args:
-            dimension_scores: 各维度分数
-            total_level: 总体水平
-            weaknesses: 短板维度列表
-            
-        Returns:
-            训练优先级列表
-        """
-        if not dimension_scores:
-            return []
-        
-        # 计算每个维度与总体水平的差距
-        dimension_gaps = []
-        for dim, score in dimension_scores.items():
-            gap = total_level - score  # 正值表示低于总体水平
-            if gap > 0:  # 只考虑低于总体水平的维度
-                dimension_gaps.append((dim, gap))
-        
-        # 按差距排序，差距越大优先级越高
-        dimension_gaps.sort(key=lambda x: x[1], reverse=True)
-        
-        # 生成前3个优先级项目
-        priority_items = []
-        for rank, (dim, gap) in enumerate(dimension_gaps[:3], 1):
-            # 生成训练建议
-            suggestion = self._generate_training_suggestion(dim, gap)
-            
-            priority_item = PriorityItem(
-                rank=rank,
-                dimension=dim,
-                label=NTRPConstants.DIMENSION_META.get(dim, dim),
-                gap=gap,
-                normalized_gap=min(100, gap * 20),  # 将差距转换为0-100的数值
-                suggestion=suggestion
-            )
-            priority_items.append(priority_item)
-        
-        return priority_items
-    
     def _ntrp_to_percentage(self, ntrp_score: float) -> float:
         """
         将NTRP分数转换为百分比
@@ -244,30 +189,3 @@ class ChartGenerator:
             return full_comment[:47] + "..."
         
         return full_comment
-    
-    def _generate_training_suggestion(self, dimension: str, gap: float) -> str:
-        """
-        根据维度和差距生成训练建议
-        
-        Args:
-            dimension: 维度名称
-            gap: 与总体水平的差距
-            
-        Returns:
-            训练建议
-        """
-        from config_manager import ConfigManager
-        config_manager = ConfigManager()
-        
-        # 获取基础训练建议
-        base_suggestion = config_manager.get_training_base_suggestion(dimension)
-        
-        # 根据差距大小添加强度提示
-        if gap >= 1.0:
-            intensity = config_manager.get_training_intensity_text("high")
-        elif gap >= 0.5:
-            intensity = config_manager.get_training_intensity_text("medium")
-        else:
-            intensity = config_manager.get_training_intensity_text("low")
-        
-        return f"{base_suggestion}。{intensity}"

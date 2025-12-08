@@ -204,8 +204,9 @@ class ResultDisplay:
             # 获取现状问题描述（从dimension_suggestions.json）
             current_state = self.config_manager.get_dimension_suggestion(dim, score)
             
-            # 获取具体练习方向（从tennis_knowledge.json）
-            improvement_suggestion = self.config_manager.get_improvement_suggestion(dim)
+            # 根据差距生成个性化训练建议
+            gap = result.rounded_level - score  # 计算与总体水平的差距
+            training_suggestion = self._generate_personalized_training_suggestion(dim, gap)
             
             print(f"- {dim_name}（约 {score:.1f} 级）：")
             if current_state:
@@ -215,9 +216,9 @@ class ResultDisplay:
                     # 显示现状问题（第一句作为问题描述）
                     print(f"  {current_lines[0]}。")
             
-            # 显示具体练习方向
-            if improvement_suggestion:
-                print(f"  {improvement_suggestion}")
+            # 显示个性化训练建议
+            if training_suggestion:
+                print(f"  {training_suggestion}")
             print()
         
         # 添加总结句
@@ -433,3 +434,28 @@ class ResultDisplay:
             relative_comment = "。".join(relative_sentences) + "。"
         
         return base_comment, relative_comment
+    
+    def _generate_personalized_training_suggestion(self, dimension: str, gap: float) -> str:
+        """
+        根据维度和差距生成个性化训练建议
+        
+        Args:
+            dimension: 维度名称
+            gap: 与总体水平的差距
+            
+        Returns:
+            个性化训练建议
+        """
+        # 获取详细的训练方法（从improvement_suggestions）
+        detailed_suggestion = self.config_manager.get_improvement_suggestion(dimension)
+        
+        # 根据差距大小添加训练强度提示
+        if gap >= 1.0:
+            intensity = self.config_manager.get_training_intensity_text("high")
+        elif gap >= 0.5:
+            intensity = self.config_manager.get_training_intensity_text("medium")
+        else:
+            intensity = self.config_manager.get_training_intensity_text("low")
+        
+        # 组合详细方法和强度建议
+        return f"{detailed_suggestion} {intensity}"
