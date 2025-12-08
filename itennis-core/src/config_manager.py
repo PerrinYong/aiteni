@@ -30,6 +30,7 @@ class ConfigManager:
             
         self._questions: Optional[List[QuestionConfig]] = None
         self._suggestions: Optional[Dict[str, List[Dict[str, Any]]]] = None
+        self._tennis_knowledge: Optional[Dict[str, Any]] = None
     
     def load_questions(self) -> List[QuestionConfig]:
         """
@@ -110,6 +111,159 @@ class ConfigManager:
             raise FileNotFoundError(f"评语配置文件不存在: {suggestions_file}")
         except json.JSONDecodeError as e:
             raise ValueError(f"评语配置文件格式错误: {e}")
+    
+    def load_tennis_knowledge(self) -> Dict[str, Any]:
+        """
+        加载网球知识配置
+        
+        Returns:
+            网球知识配置字典
+            
+        Raises:
+            FileNotFoundError: 配置文件不存在
+            ValueError: 配置文件格式错误
+        """
+        if self._tennis_knowledge is not None:
+            return self._tennis_knowledge
+            
+        knowledge_file = self.config_dir / "tennis_knowledge.json"
+        
+        try:
+            with open(knowledge_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                
+            self._tennis_knowledge = data
+            return data
+            
+        except FileNotFoundError:
+            raise FileNotFoundError(f"网球知识配置文件不存在: {knowledge_file}")
+        except json.JSONDecodeError as e:
+            raise ValueError(f"网球知识配置文件格式错误: {e}")
+    
+    def get_level_description(self, level: float) -> str:
+        """
+        获取等级描述
+        
+        Args:
+            level: NTRP等级
+            
+        Returns:
+            等级描述
+        """
+        knowledge = self.load_tennis_knowledge()
+        level_str = f"{level:.1f}"
+        return knowledge.get("level_descriptions", {}).get(level_str, "")
+    
+    def get_level_label(self, level: float) -> str:
+        """
+        获取等级标签
+        
+        Args:
+            level: NTRP等级
+            
+        Returns:
+            等级标签
+        """
+        knowledge = self.load_tennis_knowledge()
+        level_str = f"{level:.1f}"
+        return knowledge.get("level_labels", {}).get(level_str, f"等级{level:.1f}")
+    
+    def get_dimension_name(self, dimension: str) -> str:
+        """
+        获取维度中文名称
+        
+        Args:
+            dimension: 维度英文名
+            
+        Returns:
+            维度中文名称
+        """
+        knowledge = self.load_tennis_knowledge()
+        return knowledge.get("dimension_meta", {}).get(dimension, dimension)
+    
+    def get_advantage_suggestion(self, dimension: str) -> str:
+        """
+        获取优势维度建议
+        
+        Args:
+            dimension: 维度名称
+            
+        Returns:
+            建议文本
+        """
+        knowledge = self.load_tennis_knowledge()
+        suggestions = knowledge.get("advantage_suggestions", {})
+        return suggestions.get(dimension, suggestions.get("default", "这是你的优势项目。"))
+    
+    def get_improvement_suggestion(self, dimension: str) -> str:
+        """
+        获取改进建议
+        
+        Args:
+            dimension: 维度名称
+            
+        Returns:
+            建议文本
+        """
+        knowledge = self.load_tennis_knowledge()
+        suggestions = knowledge.get("improvement_suggestions", {})
+        return suggestions.get(dimension, suggestions.get("default", "建议加强这方面的练习。"))
+    
+    def get_relative_evaluation_text(self, evaluation_type: str) -> str:
+        """
+        获取相对评价文本
+        
+        Args:
+            evaluation_type: 评价类型 (strong_advantage, moderate_advantage, weakness, balanced)
+            
+        Returns:
+            评价文本
+        """
+        knowledge = self.load_tennis_knowledge()
+        texts = knowledge.get("relative_evaluation_texts", {})
+        return texts.get(evaluation_type, "")
+    
+    def get_training_base_suggestion(self, dimension: str) -> str:
+        """
+        获取基础训练建议
+        
+        Args:
+            dimension: 维度名称
+            
+        Returns:
+            训练建议
+        """
+        knowledge = self.load_tennis_knowledge()
+        suggestions = knowledge.get("training_base_suggestions", {})
+        return suggestions.get(dimension, f"加强{self.get_dimension_name(dimension)}训练")
+    
+    def get_training_intensity_text(self, intensity: str) -> str:
+        """
+        获取训练强度文本
+        
+        Args:
+            intensity: 强度级别 (high, medium, low)
+            
+        Returns:
+            强度描述文本
+        """
+        knowledge = self.load_tennis_knowledge()
+        texts = knowledge.get("training_intensity_texts", {})
+        return texts.get(intensity, "")
+    
+    def get_general_training_advice(self, advice_type: str) -> str:
+        """
+        获取通用训练建议
+        
+        Args:
+            advice_type: 建议类型 (weekly_practice, periodic_evaluation, focus_on_weakness)
+            
+        Returns:
+            建议文本
+        """
+        knowledge = self.load_tennis_knowledge()
+        advice = knowledge.get("general_training_advice", {})
+        return advice.get(advice_type, "")
     
     def get_question_by_id(self, question_id: str) -> Optional[QuestionConfig]:
         """

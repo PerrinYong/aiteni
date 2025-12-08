@@ -13,9 +13,9 @@ from data_models import EvaluateResult, ChartData, NTRPConstants, DimensionTag
 class ResultDisplay:
     """结果显示器"""
     
-    def __init__(self):
+    def __init__(self, config_manager):
         """初始化结果显示器"""
-        pass
+        self.config_manager = config_manager
     
     def display_summary_card(self, title: str, result: EvaluateResult) -> None:
         """
@@ -40,14 +40,14 @@ class ResultDisplay:
         # 底部 - 优势和提升重点
         print("\n💪 主要优势:", end=" ")
         if result.advantages:
-            advantage_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in result.advantages[:3]]
+            advantage_names = [self.config_manager.get_dimension_name(dim) for dim in result.advantages[:3]]
             print(" / ".join(advantage_names))
         else:
             print("各方面发展较为均衡")
         
         print("🎯 提升重点:", end=" ")
         if result.weaknesses:
-            weakness_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in result.weaknesses[:3]]
+            weakness_names = [self.config_manager.get_dimension_name(dim) for dim in result.weaknesses[:3]]
             print(" / ".join(weakness_names))
         else:
             print("继续保持全面发展")
@@ -112,11 +112,11 @@ class ResultDisplay:
         
         # 显示优势和短板
         if result.advantages:
-            advantage_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in result.advantages]
+            advantage_names = [self.config_manager.get_dimension_name(dim) for dim in result.advantages]
             print(f"💪 优势项目: {', '.join(advantage_names)}")
         
         if result.weaknesses:
-            weakness_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in result.weaknesses]
+            weakness_names = [self.config_manager.get_dimension_name(dim) for dim in result.weaknesses]
             print(f"📈 改进方向: {', '.join(weakness_names)}")
         
         print()
@@ -132,11 +132,11 @@ class ResultDisplay:
         
         summary_parts = []
         if result.advantages:
-            advantage_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in result.advantages]
+            advantage_names = [self.config_manager.get_dimension_name(dim) for dim in result.advantages]
             summary_parts.append(f"在同水平玩家中，你已经具备一定的实战竞争力，尤其在{'、'.join(advantage_names)}上表现较好。")
         
         if result.weaknesses:
-            weakness_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in result.weaknesses]
+            weakness_names = [self.config_manager.get_dimension_name(dim) for dim in result.weaknesses]
             summary_parts.append(f"如果能够补上{'、'.join(weakness_names)}等环节，你的整体实力还有明显上升空间。")
         
         for part in summary_parts:
@@ -144,13 +144,17 @@ class ResultDisplay:
     
     def _display_radar_summary(self, result: EvaluateResult) -> None:
         """显示雷达图概要"""
+        # 从配置获取维度分组
+        knowledge = self.config_manager.load_tennis_knowledge()
+        dimension_groups = knowledge.get("dimension_groups", {})
+        
         # 按分组显示核心维度得分
-        for group_name, dimensions in NTRPConstants.DIMENSION_GROUPS.items():
+        for group_name, dimensions in dimension_groups.items():
             group_dims = [(dim, result.dimension_scores.get(dim)) for dim in dimensions 
                          if dim in result.dimension_scores]
             
             if group_dims:
-                dim_scores = [f"{NTRPConstants.DIMENSION_META.get(dim, dim)}({score:.1f})" 
+                dim_scores = [f"{self.config_manager.get_dimension_name(dim)}({score:.1f})" 
                              for dim, score in group_dims if score is not None]
                 print(f"   {group_name}: {' / '.join(dim_scores)}")
     
@@ -163,7 +167,7 @@ class ResultDisplay:
         print()
         
         for dim in result.advantages:
-            dim_name = NTRPConstants.DIMENSION_META.get(dim, dim)
+            dim_name = self.config_manager.get_dimension_name(dim)
             score = result.dimension_scores.get(dim, 0)
             comment = result.dimension_comments.get(dim, "")
             
@@ -172,7 +176,7 @@ class ResultDisplay:
             if comment:
                 sentences = comment.split("。")
                 current_state = sentences[0] + "。" if sentences else ""
-                suggestion = self._generate_advantage_suggestion(dim, current_state)
+                suggestion = self.config_manager.get_advantage_suggestion(dim)
                 print(f"  {current_state}")
                 print(f"  {suggestion}")
             print()
@@ -186,7 +190,7 @@ class ResultDisplay:
         print()
         
         for dim in result.weaknesses:
-            dim_name = NTRPConstants.DIMENSION_META.get(dim, dim)
+            dim_name = self.config_manager.get_dimension_name(dim)
             score = result.dimension_scores.get(dim, 0)
             comment = result.dimension_comments.get(dim, "")
             
@@ -195,7 +199,7 @@ class ResultDisplay:
             if comment:
                 sentences = comment.split("。")
                 problem = sentences[0] + "。" if sentences else ""
-                suggestion = self._generate_improvement_suggestion(dim, problem)
+                suggestion = self.config_manager.get_improvement_suggestion(dim)
                 print(f"  {problem}")
                 print(f"  {suggestion}")
             print()
@@ -208,12 +212,16 @@ class ResultDisplay:
         print("📝 各维度详细评估与建议：")
         print()
         
-        for group_name, dimensions in NTRPConstants.DIMENSION_GROUPS.items():
+        # 从配置获取维度分组
+        knowledge = self.config_manager.load_tennis_knowledge()
+        dimension_groups = knowledge.get("dimension_groups", {})
+        
+        for group_name, dimensions in dimension_groups.items():
             group_has_content = any(dim in result.dimension_scores for dim in dimensions)
             if group_has_content:
                 for dim in dimensions:
                     if dim in result.dimension_scores:
-                        dim_name = NTRPConstants.DIMENSION_META.get(dim, dim)
+                        dim_name = self.config_manager.get_dimension_name(dim)
                         score = result.dimension_scores[dim]
                         comment = result.dimension_comments.get(dim, "暂无评语")
                         
@@ -232,23 +240,7 @@ class ResultDisplay:
     
     def _display_level_description(self, level: float) -> None:
         """显示等级详细说明"""
-        descriptions = {
-            1.0: "刚开始学习网球，掌握基本的击球动作",
-            1.5: "能够进行简单的对练，正在建立基本技术",
-            2.0: "具备初步的比赛能力，技术尚在发展中",
-            2.5: "能够进行基本的战术配合，技术日渐成熟",
-            3.0: "具备较好的技术基础，能够参与业余比赛",
-            3.5: "技术全面，具有一定的比赛经验和战术意识",
-            4.0: "高水平业余选手，技术精湛，战术成熟",
-            4.5: "接近专业水平，具备强烈的竞技能力",
-            5.0: "准专业或地区性高水平选手",
-            5.5: "优秀的竞技选手，具备全国比赛实力",
-            6.0: "职业或准职业水平",
-            7.0: "国际职业水平"
-        }
-        
-        rounded = round(level * 2) / 2
-        description = descriptions.get(rounded, "")
+        description = self.config_manager.get_level_description(level)
         if description:
             print(f"💡 等级说明: {description}")
     
@@ -437,11 +429,11 @@ class ResultDisplay:
         if not relative_sentences:
             diff = score - total_level
             if diff >= 0.5:
-                relative_comment = "你在这一项上明显高于整体水平，可以把它当成比赛中的主要得分手段之一。"
+                relative_comment = self.config_manager.get_relative_evaluation_text("strong_advantage")
             elif diff <= -0.5:
-                relative_comment = "这一项相对是短板，会在比赛中拖慢整体上限，建议作为近期重点练习方向。"
+                relative_comment = self.config_manager.get_relative_evaluation_text("weakness")
             else:
-                relative_comment = "这一项与整体水平大体一致，可以在保持稳定的基础上，循序渐进地提高质量。"
+                relative_comment = self.config_manager.get_relative_evaluation_text("balanced")
         else:
             relative_comment = "。".join(relative_sentences) + "。"
         

@@ -21,6 +21,7 @@ class NTRPEvaluator:
         self,
         questions: List[QuestionConfig],
         suggestion_rules: Dict[str, List[Dict[str, any]]],
+        config_manager,
         spread: float = 1.0,
     ) -> None:
         """
@@ -29,10 +30,12 @@ class NTRPEvaluator:
         Args:
             questions: 问题配置列表
             suggestion_rules: 评语规则字典
+            config_manager: 配置管理器
             spread: 模糊评分的扩散参数，控制三角形隶属度函数的宽度
         """
         self.questions = questions
         self.suggestion_rules = suggestion_rules
+        self.config_manager = config_manager
         self.spread = spread
         
         # 创建问题和选项的快速查找字典
@@ -65,7 +68,7 @@ class NTRPEvaluator:
         # 3) 计算期望等级
         raw_level = self._compute_raw_level(support, hard_cap)
         rounded_level = round_to_half(raw_level)
-        level_label = get_level_label(rounded_level)
+        level_label = get_level_label(rounded_level, self.config_manager)
         
         # 4) 计算维度分数
         dimension_scores = self._compute_dimension_scores(dim_scores)
@@ -237,11 +240,11 @@ class NTRPEvaluator:
         diff = dimension_score - total_level
         
         if diff >= 0.5:
-            return "这是你的优势项目，在比赛中可以多多利用。"
+            return self.config_manager.get_relative_evaluation_text("strong_advantage")
         elif diff <= -0.5:
-            return "这是相对短板，建议重点加强训练。"
+            return self.config_manager.get_relative_evaluation_text("weakness")
         else:
-            return "这个方面与你的整体水平比较匹配。"
+            return self.config_manager.get_relative_evaluation_text("balanced")
     
     def _analyze_strengths_weaknesses(
         self, 
@@ -289,12 +292,12 @@ class NTRPEvaluator:
         
         # 优势分析
         if advantages:
-            advantage_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in advantages]
+            advantage_names = [self.config_manager.get_dimension_name(dim) for dim in advantages]
             lines.append(f"你的优势项目包括：{', '.join(advantage_names)}。")
         
         # 短板分析
         if weaknesses:
-            weakness_names = [NTRPConstants.DIMENSION_META.get(dim, dim) for dim in weaknesses]
+            weakness_names = [self.config_manager.get_dimension_name(dim) for dim in weaknesses]
             lines.append(f"需要重点改进的方面有：{', '.join(weakness_names)}。")
         
         # 训练建议

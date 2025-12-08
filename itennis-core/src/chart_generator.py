@@ -17,9 +17,9 @@ from data_models import (
 class ChartGenerator:
     """图表数据生成器"""
     
-    def __init__(self):
+    def __init__(self, config_manager):
         """初始化图表生成器"""
-        pass
+        self.config_manager = config_manager
     
     def generate_chart_data(self, result: EvaluateResult) -> ChartData:
         """

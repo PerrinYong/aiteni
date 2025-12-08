@@ -171,12 +171,13 @@ class NTRPConstants:
 #  辅助函数
 # =========================
 
-def get_level_label(level: float) -> str:
+def get_level_label(level: float, config_manager=None) -> str:
     """
     根据等级获取标签
     
     Args:
         level: NTRP等级
+        config_manager: 配置管理器，可选
         
     Returns:
         等级标签
@@ -187,7 +188,11 @@ def get_level_label(level: float) -> str:
     # 确保在有效范围内
     rounded = max(1.0, min(7.0, rounded))
     
-    return NTRPConstants.LEVEL_LABELS.get(rounded, "未知等级")
+    if config_manager:
+        return config_manager.get_level_label(rounded)
+    else:
+        # 默认值兼容
+        return f"等级{rounded:.1f}"
 
 
 def round_to_half(value: float) -> float:

@@ -29,8 +29,8 @@ class AppController:
         # 初始化各个组件
         self.config_manager = ConfigManager(config_dir)
         self.ui = InteractiveUI()
-        self.display = ResultDisplay()
-        self.chart_generator = ChartGenerator()
+        self.display = ResultDisplay(self.config_manager)
+        self.chart_generator = ChartGenerator(self.config_manager)
         
         # 核心组件（需要配置初始化）
         self._evaluator: Optional[NTRPEvaluator] = None
@@ -50,7 +50,7 @@ class AppController:
             suggestions = self.config_manager.load_suggestions()
             
             # 初始化评估器
-            self._evaluator = NTRPEvaluator(self._questions, suggestions)
+            self._evaluator = NTRPEvaluator(self._questions, suggestions, self.config_manager)
             
             self._is_initialized = True
             return True
