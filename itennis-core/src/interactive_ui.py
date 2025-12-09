@@ -7,6 +7,7 @@
 
 from typing import Dict, List, Optional
 import sys
+import random
 
 from data_models import QuestionConfig, NTRPConstants
 
@@ -99,7 +100,11 @@ class InteractiveUI:
         
         answers: Dict[str, str] = {}
         
-        for i, question in enumerate(questions, 1):
+        # 创建问题列表的副本并打乱顺序，以避免用户感知到维度分组
+        display_questions = questions.copy()
+        random.shuffle(display_questions)
+        
+        for i, question in enumerate(display_questions, 1):
             print(f"\n【问题 {i}/{len(questions)}】")
             print(f"📋 {question.text}")
             print()
