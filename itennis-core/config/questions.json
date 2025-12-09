@@ -21,27 +21,34 @@
         {
           "id": "Q1_A3",
           "text": "经常能打到 6～10 拍，中速球勉强稳定，但深度方向不太可控",
-          "center_level": 3.0
+          "center_level": 3.0,
+          "anchor_type": "locator"
         },
         {
           "id": "Q1_A4",
           "text": "经常能打到 10 拍以上，双方主要靠主动进攻或战术变化结束回合",
-          "center_level": 3.5
+          "center_level": 3.5,
+          "anchor_type": "locator"
         },
         {
           "id": "Q1_A5",
           "text": "在中速对拉中失误很少，更多是通过主动加速、变线得分或失分",
-          "center_level": 4.0
+          "center_level": 4.0,
+          "anchor_type": "locator"
         },
         {
           "id": "Q1_A6",
           "text": "在接近比赛节奏的多拍对拉中，失误率较低，能主动控制回合节奏",
-          "center_level": 4.5
+          "center_level": 4.5,
+          "anchor_type": "baseline",
+          "baseline_min_level": 4.5
         },
         {
           "id": "Q1_A7",
           "text": "在节奏较快、深度较好的多拍底线对抗中，能长时间保持低失误率，同时不断通过变线、加速等方式创造进攻机会",
-          "center_level": 5.5
+          "center_level": 5.5,
+          "anchor_type": "baseline",
+          "baseline_min_level": 5.0
         }
       ]
     },
@@ -195,32 +202,41 @@
         {
           "id": "Q5_A3",
           "text": "一发能偶尔打出有力量的球，但经常出界；二发较慢但比较稳",
-          "center_level": 3.0
+          "center_level": 3.0,
+          "anchor_type": "locator"
         },
         {
           "id": "Q5_A4",
           "text": "一发有一定攻击性，二发能稳定落点，不怎么担心双误",
-          "center_level": 3.5
+          "center_level": 3.5,
+          "anchor_type": "locator"
         },
         {
           "id": "Q5_A5",
           "text": "能通过发球主动针对对手弱点，偶尔直接发球得分或逼出短球",
-          "center_level": 4.0
+          "center_level": 4.0,
+          "anchor_type": "locator"
         },
         {
           "id": "Q5_A6",
           "text": "发球是你重要武器，有明显的落点和旋转变化，对同水平对手构成威胁",
-          "center_level": 4.5
+          "center_level": 4.5,
+          "anchor_type": "baseline",
+          "baseline_min_level": 4.5
         },
         {
           "id": "Q5_A7",
           "text": "在多数发球局中，一发经常能直接得分或迫使对手打出保守回球，二发也不常被主动进攻，因发球被破发的情况相对较少",
-          "center_level": 5.5
+          "center_level": 5.5,
+          "anchor_type": "baseline",
+          "baseline_min_level": 5.0
         },
         {
           "id": "Q5_A8",
           "text": "在强度较高的比赛中，你的发球局整体非常稳固，一发和二发都能持续给对手压力，很少因为发球环节而连续丢局",
-          "center_level": 6.0
+          "center_level": 6.0,
+          "anchor_type": "baseline",
+          "baseline_min_level": 5.5
         }
       ]
     },
@@ -454,27 +470,35 @@
         {
           "id": "Q11_A2",
           "text": "对整体水平比你稍强的对手，偶尔能拿到 2～3 局（2:6、3:6），很少有胶着的盘",
-          "center_level": 3.0
+          "center_level": 3.0,
+          "anchor_type": "locator"
         },
         {
           "id": "Q11_A3",
           "text": "面对你认为稍强或相近的对手，比分经常是 3:6、4:6，能和对方有一定拉锯",
-          "center_level": 3.5
+          "center_level": 3.5,
+          "anchor_type": "locator"
         },
         {
           "id": "Q11_A5",
           "text": "面对你认为同水平或略弱的对手，你通常能赢下这一盘（6:3 以上的比分更常见）",
-          "center_level": 4.5
+          "center_level": 4.5,
+          "anchor_type": "baseline",
+          "baseline_min_level": 4.5
         },
         {
           "id": "Q11_A6",
           "text": "在你常参加的比赛中，大部分对手都需要发挥得很好才有机会战胜你，你也经常在淘汰赛阶段保持较好的胜率",
-          "center_level": 5.0
+          "center_level": 5.0,
+          "anchor_type": "baseline",
+          "baseline_min_level": 5.0
         },
         {
           "id": "Q11_A7",
           "text": "在参与的业余或公开赛事中，你多次打进后几轮（如八强、四强、决赛），面对普遍被认为较强的对手也能经常取胜",
-          "center_level": 6.0
+          "center_level": 6.0,
+          "anchor_type": "baseline",
+          "baseline_min_level": 5.5
         }
       ]
     },

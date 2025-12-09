@@ -33,6 +33,8 @@ class OptionConfig:
     text: str                           # 选项显示文本
     center_level: float                 # 该选项对应的中心等级
     hard_cap: Optional[float] = None    # 硬性等级上限（可选）
+    anchor_type: str = "normal"          # 锚点类型: normal/locator/baseline
+    baseline_min_level: Optional[float] = None  # 基线最低等级（仅baseline类型使用）
 
 
 @dataclass
@@ -113,6 +115,15 @@ class EvaluateResult:
     summary_text: str                             # 总结长文案
     support_distribution: Dict[float, float]      # 各等级支持度分布（调试用）
     chart_data: Optional[ChartData] = None        # 图表数据
+    # 木桶效应相关统计
+    base_level: Optional[float] = None            # Anchor机制计算的基础等级
+    dimension_mean: Optional[float] = None        # 维度平均值
+    dimension_variance: Optional[float] = None    # 维度方差
+    dimension_min: Optional[float] = None         # 最低维度分数
+    dimension_max: Optional[float] = None         # 最高维度分数
+    balance_factor: Optional[float] = None        # 均衡度因子(0-1)
+    barrel_adjusted_level: Optional[float] = None # 木桶修正后等级
+    comprehensive_bonus: Optional[float] = None   # 全面型加成
 
 
 # =========================
@@ -165,6 +176,19 @@ class NTRPConstants:
         "网前&移动": ["net", "footwork"],
         "比赛&经验": ["tactics", "match_result", "training"]
     }
+    
+    # Anchor机制相关常量
+    LOCATOR_SIGMA: float = 0.5          # 定位选项的标准差
+    BASELINE_SIGMA: float = 1.0         # 基线选项的标准差
+    LOCATOR_BOOST: float = 1.2          # 定位选项的权重加成系数
+    
+    # 木桶效应相关常量
+    VARIANCE_LOW: float = 0.1           # 基本均衡的方差阈值
+    VARIANCE_HIGH: float = 1.0          # 不平衡严重的方差阈值
+    BALANCE_THRESHOLD: float = 0.8      # 高均衡度阈值
+    HIGH_LEVEL_THRESHOLD: float = 4.5   # 高水平阈值
+    MAX_BARREL_PENALTY: float = 1.0     # 木桶效应最大下调幅度
+    COMPREHENSIVE_BONUS: float = 0.25   # 全面型选手加成
 
 
 # =========================

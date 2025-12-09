@@ -65,6 +65,8 @@ class ConfigManager:
                         text=o["text"],
                         center_level=float(o["center_level"]),
                         hard_cap=float(o["hard_cap"]) if "hard_cap" in o else None,
+                        anchor_type=o.get("anchor_type", "normal"),
+                        baseline_min_level=float(o["baseline_min_level"]) if "baseline_min_level" in o else None,
                     )
                     for o in q["options"]
                 ]

@@ -65,13 +65,19 @@ class NTRPEvaluator:
         # 2) 计算支持度分布
         support, dim_scores, hard_cap = self._compute_support_distribution(answers)
         
-        # 3) 计算期望等级
-        raw_level = self._compute_raw_level(support, hard_cap)
-        rounded_level = round_to_half(raw_level)
-        level_label = get_level_label(rounded_level, self.config_manager)
+        # 3) 计算基础等级（Anchor机制后的结果）
+        base_level = self._compute_raw_level(support, hard_cap)
         
         # 4) 计算维度分数
         dimension_scores = self._compute_dimension_scores(dim_scores)
+        
+        # 5) 计算木桶效应统计数据
+        barrel_stats = self._compute_barrel_effect(dimension_scores, base_level)
+        
+        # 6) 应用木桶效应调整
+        final_level = barrel_stats['final_level']
+        rounded_level = round_to_half(final_level)
+        level_label = get_level_label(rounded_level, self.config_manager)
         
         # 5) 生成评语
         dimension_comments = self._build_dimension_comments(dimension_scores, rounded_level)
@@ -86,7 +92,7 @@ class NTRPEvaluator:
         )
         
         return EvaluateResult(
-            total_level=raw_level,
+            total_level=final_level,
             rounded_level=rounded_level,
             level_label=level_label,
             dimension_scores=dimension_scores,
@@ -95,7 +101,16 @@ class NTRPEvaluator:
             weaknesses=weaknesses,
             summary_text=summary_text,
             support_distribution=support.copy(),
-            chart_data=None  # 将由 chart_generator 生成
+            chart_data=None,  # 将由 chart_generator 生成
+            # 木桶效应统计数据
+            base_level=base_level,
+            dimension_mean=barrel_stats['mean'],
+            dimension_variance=barrel_stats['variance'],
+            dimension_min=barrel_stats['min'],
+            dimension_max=barrel_stats['max'],
+            balance_factor=barrel_stats['balance_factor'],
+            barrel_adjusted_level=barrel_stats['barrel_adjusted'],
+            comprehensive_bonus=barrel_stats['bonus']
         )
     
     def _validate_answers(self, answers: Dict[str, str]) -> bool:
@@ -139,10 +154,16 @@ class NTRPEvaluator:
             if option.hard_cap is not None:
                 hard_cap = min(hard_cap, option.hard_cap)
             
-            # 计算该选项对各等级的隶属度
+            # 计算该选项对各等级的隔属度
             for level in NTRPConstants.LEVELS:
-                membership = self._compute_membership(level, option.center_level, self.spread)
-                support[level] += membership * question.weight
+                membership = self._compute_membership_by_anchor(level, option)
+                
+                # 如果是locator类型，应用加成系数
+                weight_factor = question.weight
+                if option.anchor_type == "locator":
+                    weight_factor *= NTRPConstants.LOCATOR_BOOST
+                
+                support[level] += membership * weight_factor
             
             # 记录维度分数
             if question.dimension not in dim_scores:
@@ -153,7 +174,7 @@ class NTRPEvaluator:
     
     def _compute_membership(self, level: float, center: float, spread: float) -> float:
         """
-        计算三角形隶属度函数
+        计算三角形隔属度函数
         
         Args:
             level: 目标等级
@@ -161,12 +182,47 @@ class NTRPEvaluator:
             spread: 扩散参数
             
         Returns:
-            隶属度 [0, 1]
+            隔属度 [0, 1]
         """
         diff = abs(level - center)
         if diff >= spread:
             return 0.0
         return 1.0 - diff / spread
+    
+    def _compute_membership_by_anchor(self, level: float, option: OptionConfig) -> float:
+        """
+        根据anchor_type计算不同类型的membership
+        
+        Args:
+            level: 目标等级
+            option: 选项配置
+            
+        Returns:
+            隔属度 [0, 1]
+        """
+        anchor_type = option.anchor_type
+        center = option.center_level
+        
+        if anchor_type == "locator":
+            # 定位选项: 使用更窄的高斯分布
+            sigma = NTRPConstants.LOCATOR_SIGMA
+            return math.exp(-((level - center) ** 2) / (2 * sigma ** 2))
+            
+        elif anchor_type == "baseline":
+            # 基线选项: 只给高段位贡献
+            min_level = option.baseline_min_level
+            if min_level is None:
+                min_level = NTRPConstants.HIGH_LEVEL_THRESHOLD
+            
+            if level < min_level:
+                return 0.0
+            
+            sigma = NTRPConstants.BASELINE_SIGMA
+            return math.exp(-((level - min_level) ** 2) / (2 * sigma ** 2))
+            
+        else:  # normal
+            # 普通选项: 沿用现有逻辑
+            return math.exp(-((level - center) ** 2) / (2 * self.spread ** 2))
     
     def _compute_raw_level(self, support: Dict[float, float], hard_cap: float) -> float:
         """基于支持度分布计算期望等级"""
@@ -265,6 +321,81 @@ class NTRPEvaluator:
                 weaknesses.append(dim)
         
         return advantages, weaknesses
+    
+    def _compute_barrel_effect(
+        self,
+        dimension_scores: Dict[str, float],
+        base_level: float
+    ) -> Dict[str, float]:
+        """
+        计算木桶效应相关统计数据和等级调整
+        
+        Args:
+            dimension_scores: 各维度分数
+            base_level: Anchor机制计算的基础等级
+            
+        Returns:
+            包含木桶效应统计数据的字典
+        """
+        if not dimension_scores:
+            return {
+                'mean': base_level,
+                'variance': 0.0,
+                'min': base_level,
+                'max': base_level,
+                'balance_factor': 1.0,
+                'barrel_adjusted': base_level,
+                'bonus': 0.0,
+                'final_level': base_level
+            }
+        
+        # 1. 计算基本统计量
+        scores = list(dimension_scores.values())
+        n = len(scores)
+        
+        mean = sum(scores) / n
+        variance = sum((s - mean) ** 2 for s in scores) / n
+        min_score = min(scores)
+        max_score = max(scores)
+        
+        # 2. 计算均衡度因子 B ∈ [0, 1]
+        variance_low = NTRPConstants.VARIANCE_LOW
+        variance_high = NTRPConstants.VARIANCE_HIGH
+        
+        if variance <= variance_low:
+            balance_factor = 1.0
+        elif variance >= variance_high:
+            balance_factor = 0.0
+        else:
+            balance_factor = 1.0 - (variance - variance_low) / (variance_high - variance_low)
+        
+        balance_factor = max(0.0, min(1.0, balance_factor))
+        
+        # 3. 木桶效应调整
+        # L_barrel = B * L_base + (1 - B) * D_min
+        barrel_adjusted = balance_factor * base_level + (1 - balance_factor) * min_score
+        
+        # 应用最大下调限制
+        max_penalty = NTRPConstants.MAX_BARREL_PENALTY
+        barrel_adjusted = max(base_level - max_penalty, barrel_adjusted)
+        
+        # 4. 高水平全面型加成
+        bonus = 0.0
+        if mean >= NTRPConstants.HIGH_LEVEL_THRESHOLD and balance_factor >= NTRPConstants.BALANCE_THRESHOLD:
+            bonus = NTRPConstants.COMPREHENSIVE_BONUS
+        
+        final_level = barrel_adjusted + bonus
+        
+        return {
+            'mean': mean,
+            'variance': variance,
+            'min': min_score,
+            'max': max_score,
+            'balance_factor': balance_factor,
+            'barrel_adjusted': barrel_adjusted,
+            'bonus': bonus,
+            'final_level': final_level
+        }
     
     def _build_summary_text(
         self,
