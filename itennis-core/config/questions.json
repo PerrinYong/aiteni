@@ -4,8 +4,16 @@
       "id": "Q1",
       "dimension": "baseline",
       "weight": 1.5,
-      "text": "你和水平相近的球友，从底线相互对拉时（中速，不是全力爆抽），通常能稳定打多少拍？",
+      "question_tier": "basic",
+      "text": "你和水平相近的球友,从底线相互对拉时(中速,不是全力爆抽),通常能稳定打多少拍?",
       "options": [
+        {
+          "id": "Q1_A0",
+          "text": "刚接触底线对拉时,能偶尔把球打过网,但连续对拉超过 2 拍的情况不多,经常在第 1 拍或对方一加速就失误",
+          "center_level": 1.5,
+          "hard_cap": 2.0,
+          "anchor_type": "locator"
+        },
         {
           "id": "Q1_A1",
           "text": "很难连续超过 3 拍，经常 1～2 拍就下网或出界",
@@ -56,8 +64,14 @@
       "id": "Q2",
       "dimension": "baseline",
       "weight": 1.0,
-      "text": "从整体情况看，你的底线来回球，一般能把球打到多深？",
+      "question_tier": "basic",
+      "text": "从整体情况看,你的底线来回球,一般能把球打到多深?",
       "options": [
+        {
+          "id": "Q2_A0",
+          "text": "多数球只是刚过网或明显偏短,深浅基本不受控制,很少能把对手顶到发球线附近",
+          "center_level": 1.5
+        },
         {
           "id": "Q2_A1",
           "text": "多数球都落在发球线附近或更短，很难把对手顶到底线",
@@ -99,8 +113,14 @@
       "id": "Q3",
       "dimension": "forehand",
       "weight": 1.0,
-      "text": "正手底线球是你目前的水平中，大概是什么状态？",
+      "question_tier": "basic",
+      "text": "正手底线球是你目前的水平中,大概是什么状态?",
       "options": [
+        {
+          "id": "Q3_A0",
+          "text": "正手动作还在适应阶段,经常打空或打框,只要对方来球稍快就很难稳定把球打回去",
+          "center_level": 1.5
+        },
         {
           "id": "Q3_A1",
           "text": "能把球打回去，但动作不完整，方向深度都很随机",
@@ -142,8 +162,15 @@
       "id": "Q4",
       "dimension": "backhand",
       "weight": 1.0,
-      "text": "你目前最典型的反手底线表现是？",
+      "question_tier": "basic",
+      "text": "你目前最典型的反手底线表现是?",
       "options": [
+        {
+          "id": "Q4_A0",
+          "text": "几乎不会用反手主动击球,来球到反手侧时经常选择避开或直接失误",
+          "center_level": 1.5,
+          "hard_cap": 2.5
+        },
         {
           "id": "Q4_A1",
           "text": "基本不敢用反手，尽量绕到正手打，反手出手就没底",
@@ -186,8 +213,15 @@
       "id": "Q5",
       "dimension": "serve",
       "weight": 1.5,
-      "text": "在一场普通比赛中，你的发球整体稳定性最接近哪种？",
+      "question_tier": "basic",
+      "text": "在一场普通比赛中,你的发球整体稳定性最接近哪种?",
       "options": [
+        {
+          "id": "Q5_A0",
+          "text": "发球动作还不熟练,经常发不到发球区,偶尔能发进但很不稳定",
+          "center_level": 1.5,
+          "hard_cap": 2.5
+        },
         {
           "id": "Q5_A1",
           "text": "经常双误，一局里 2～3 个双误很常见，有时甚至发不进",
@@ -244,7 +278,8 @@
       "id": "Q6",
       "dimension": "serve",
       "weight": 1.0,
-      "text": "不考虑单纯“发得进”，就发球的威胁性和多样性来说，你更像哪一种？",
+      "question_tier": "basic",
+      "text": "不考虑单纯\"发得进\",就发球的威胁性和多样性来说,你更像哪一种?",
       "options": [
         {
           "id": "Q6_A1",
@@ -287,8 +322,14 @@
       "id": "Q7",
       "dimension": "return",
       "weight": 1.0,
-      "text": "面对同水平对手的发球，你的接发通常是？",
+      "question_tier": "basic",
+      "text": "面对同水平对手的发球,你的接发通常是?",
       "options": [
+        {
+          "id": "Q7_A0",
+          "text": "只要对方发球稍快或有角度,就很难碰到球,很多球完全接不到",
+          "center_level": 1.5
+        },
         {
           "id": "Q7_A1",
           "text": "对稍微快一点的发球就容易慌，很多球直接下网或打飞",
@@ -330,8 +371,14 @@
       "id": "Q8",
       "dimension": "net",
       "weight": 1.0,
-      "text": "你对“主动上网 + 截击/高压”的感觉是？",
+      "question_tier": "basic",
+      "text": "你对“主动上网 + 截击/高压”的感觉是?",
       "options": [
+        {
+          "id": "Q8_A0",
+          "text": "几乎没有在网前击球的经验,上网后容易站位不当或直接漏球",
+          "center_level": 1.5
+        },
         {
           "id": "Q8_A1",
           "text": "基本不会主动上网，网前接球非常不踏实，宁愿退在底线",
@@ -373,8 +420,14 @@
       "id": "Q9",
       "dimension": "footwork",
       "weight": 1.0,
-      "text": "对于“被拉到两边 + 突然短球/高吊”的情况，你通常表现是？",
+      "question_tier": "basic",
+      "text": "对于“被拉到两边 + 突然短球/高吊”的情况,你通常表现是?",
       "options": [
+        {
+          "id": "Q9_A0",
+          "text": "只要对方把球拉开角度或打出变化球,我常常来不及移动,只能勉强够球或直接看球落地",
+          "center_level": 1.5
+        },
         {
           "id": "Q9_A1",
           "text": "只要对方多调动几次，我就跑不到位，经常被空场或放小球吊死",
@@ -416,8 +469,14 @@
       "id": "Q10",
       "dimension": "tactics",
       "weight": 1.0,
-      "text": "在比赛中，你更像下面哪一种？",
+      "question_tier": "basic",
+      "text": "在比赛中,你更像下面哪一种?",
       "options": [
+        {
+          "id": "Q10_A0",
+          "text": "很少打有明确计分规则的对抗,对“战术”或“如何安排线路”几乎没有概念",
+          "center_level": 1.5
+        },
         {
           "id": "Q10_A1",
           "text": "主要就是把球打回去，几乎不去想“打到哪里”“怎么打”",
@@ -459,8 +518,15 @@
       "id": "Q11",
       "dimension": "match_result",
       "weight": 1.5,
-      "text": "在你目前经常参加的单打比赛中，一盘 6 局制的典型比分更接近？",
+      "question_tier": "basic",
+      "text": "在你目前经常参加的单打比赛中,一盘 6 局制的典型比分更接近?",
       "options": [
+        {
+          "id": "Q11_A0",
+          "text": "几乎没打过完整的 6 局制单打比赛,目前没有太多可参考的比分",
+          "center_level": 1.5,
+          "hard_cap": 2.5
+        },
         {
           "id": "Q11_A1",
           "text": "对整体水平比你稍强的对手，通常很难拿到 2 局以上（0:6、1:6 更常见）",
@@ -506,8 +572,14 @@
       "id": "Q12",
       "dimension": "training",
       "weight": 0.5,
-      "text": "过去 12 个月里，你的网球训练背景和打球频率更接近哪一种？",
+      "question_tier": "basic",
+      "text": "过去 12 个月里,你的网球训练背景和打球频率更接近哪一种?",
       "options": [
+        {
+          "id": "Q12_A0",
+          "text": "刚开始接触网球不久,过去一年打球次数很少,主要是零散体验",
+          "center_level": 1.5
+        },
         {
           "id": "Q12_A1",
           "text": "完全是业余自玩，过去一年打得不多，时断时续，没有固定频率",
@@ -544,7 +616,8 @@
       "id": "Q13",
       "dimension": "forehand",
       "weight": 0.7,
-      "text": "在被对手调动、需要跑动击球的情况下，你的正手表现更接近哪一种？",
+      "question_tier": "advanced",
+      "text": "在被对手调动、需要跑动击球的情况下,你的正手表现更接近哪一种?",
       "options": [
         {
           "id": "Q13_A2",
@@ -577,7 +650,8 @@
       "id": "Q14",
       "dimension": "backhand",
       "weight": 0.7,
-      "text": "在一般底线对拉中，你的反手更常出现哪种情况？",
+      "question_tier": "advanced",
+      "text": "在一般底线对拉中,你的反手更常出现哪种情况?",
       "options": [
         {
           "id": "Q14_A2",
@@ -610,7 +684,8 @@
       "id": "Q15",
       "dimension": "return",
       "weight": 0.7,
-      "text": "面对对手的发球，你的接发球策略通常是？",
+      "question_tier": "advanced",
+      "text": "面对对手的发球,你的接发球策略通常是?",
       "options": [
         {
           "id": "Q15_A1",
@@ -648,7 +723,8 @@
       "id": "Q16",
       "dimension": "net",
       "weight": 0.7,
-      "text": "当你打出一拍质量不错的进攻球（比如压制或调动成功）后，你对“上网结束这一分”的把握如何？",
+      "question_tier": "advanced",
+      "text": "当你打出一拍质量不错的进攻球(比如压制或调动成功)后,你对“上网结束这一分”的把握如何?",
       "options": [
         {
           "id": "Q16_A2",
@@ -681,7 +757,8 @@
       "id": "Q17",
       "dimension": "footwork",
       "weight": 0.7,
-      "text": "不考虑纯粹的体能，你在击球前“调整步伐、找到合适击球点”的能力更接近哪种？",
+      "question_tier": "advanced",
+      "text": "不考虑纯粹的体能,你在击球前“调整步伐、找到合适击球点”的能力更接近哪种?",
       "options": [
         {
           "id": "Q17_A2",
@@ -714,7 +791,8 @@
       "id": "Q18",
       "dimension": "tactics",
       "weight": 0.7,
-      "text": "在比赛中，你对战术的执行和调整能力如何？",
+      "question_tier": "advanced",
+      "text": "在比赛中,你对战术的执行和调整能力如何?",
       "options": [
         {
           "id": "Q18_A1",
@@ -752,7 +830,8 @@
       "id": "Q19",
       "dimension": "match_result",
       "weight": 0.7,
-      "text": "你通常参加的比赛级别和对手水平是？",
+      "question_tier": "advanced",
+      "text": "你通常参加的比赛级别和对手水平是?",
       "options": [
         {
           "id": "Q19_A1",

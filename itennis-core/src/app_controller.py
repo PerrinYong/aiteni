@@ -91,7 +91,7 @@ class AppController:
                 self.ui.show_error(f"程序运行出错: {e}")
     
     def _handle_interactive_evaluation(self) -> None:
-        """处理交互式评估流程"""
+        """处理交互式评估流程（两阶段模式）"""
         try:
             # 显示评估提示
             self.display.display_evaluation_tips()
@@ -100,19 +100,50 @@ class AppController:
             
             self.ui.confirm_continue("准备好了吗？按回车开始评估...")
             
-            # 收集用户答案
-            answers = self.ui.collect_answers(self._questions)
+            # 分离基础题和进阶题
+            basic_questions = [q for q in self._questions if q.question_tier == "basic"]
+            advanced_questions = [q for q in self._questions if q.question_tier == "advanced"]
             
-            if not answers:  # 用户取消
+            # 阶段一：基础题评估
+            print(f"\n{'='*50}")
+            print(f"📊 【基础评估】 共 {len(basic_questions)} 题")
+            print(f"{'='*50}")
+            
+            basic_answers = self.ui.collect_answers(basic_questions)
+            
+            if not basic_answers:  # 用户取消
                 return
             
-            # 验证答案
-            if not self.config_manager.validate_answers(answers):
+            # 验证基础题答案（不要求所有问题都有答案）
+            if not self.config_manager.validate_answers(basic_answers, require_all=False):
                 self.ui.show_error("答案验证失败")
                 return
             
-            # 执行评估
-            result = self._evaluator.evaluate(answers)
+            # 执行基础题评估，获得初步等级
+            basic_result = self._evaluator.evaluate(basic_answers)
+            L_screen = basic_result.total_level
+            
+            # 判断是否需要进阶题
+            all_answers = basic_answers.copy()
+            
+            if L_screen < 3.0:
+                # 低水平选手，跳过进阶题
+                print(f"\n正在分析您的答案...")
+            else:
+                # 需要进阶题
+                print(f"\n{'='*50}")
+                print(f"📊 【进阶评估】 共 {len(advanced_questions)} 题")
+                print(f"{'='*50}")
+                
+                # 收集进阶题答案（不允许中途退出）
+                advanced_answers = self.ui.collect_answers(advanced_questions)
+                
+                if advanced_answers and self.config_manager.validate_answers(advanced_answers, require_all=False):
+                    all_answers.update(advanced_answers)
+            
+            # 执行最终评估
+            print("\n正在生成完整评估报告...")
+            result = self._evaluator.evaluate(all_answers)
             
             # 生成图表数据
             result.chart_data = self.chart_generator.generate_chart_data(result)

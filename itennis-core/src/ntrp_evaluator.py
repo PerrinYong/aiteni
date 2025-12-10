@@ -115,13 +115,16 @@ class NTRPEvaluator:
     
     def _validate_answers(self, answers: Dict[str, str]) -> bool:
         """验证答案有效性"""
-        # 检查是否所有问题都有答案
-        question_ids = {q.id for q in self.questions}
-        if not question_ids.issubset(answers.keys()):
+        # 检查至少有一些答案
+        if not answers:
             return False
         
-        # 检查每个答案选项是否有效
+        # 检查每个答案是否有效
         for question_id, option_id in answers.items():
+            # 验证问题ID是否存在
+            if question_id not in self._question_dict:
+                return False
+            # 验证选项ID是否有效
             if option_id not in self._option_dict:
                 return False
         

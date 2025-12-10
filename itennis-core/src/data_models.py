@@ -40,11 +40,12 @@ class OptionConfig:
 @dataclass
 class QuestionConfig:
     """问题配置"""
-    id: str                             # 问题ID，如 Q1
+    id: str                             # 问题ID,如 Q1
     text: str                           # 问题显示文本
-    dimension: str                      # 所属维度，如 baseline
+    dimension: str                      # 所属维度,如 baseline
     weight: float                       # 权重
     options: List[OptionConfig]         # 选项列表
+    question_tier: str = "basic"        # 问题等级: basic(基础问题) / advanced(进阶问题)
 
 
 # =========================

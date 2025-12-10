@@ -77,6 +77,7 @@ class ConfigManager:
                         dimension=q["dimension"],
                         weight=float(q.get("weight", 1.0)),
                         options=options,
+                        question_tier=q.get("question_tier", "basic"),
                     )
                 )
             
@@ -359,12 +360,13 @@ class ConfigManager:
         """
         return self.get_option_by_id(question_id, option_id) is not None
     
-    def validate_answers(self, answers: Dict[str, str]) -> bool:
+    def validate_answers(self, answers: Dict[str, str], require_all: bool = True) -> bool:
         """
         验证答案集合是否有效
         
         Args:
             answers: 答案字典，key为问题ID，value为选项ID
+            require_all: 是否要求所有问题都有答案（默认True）
             
         Returns:
             是否全部有效
@@ -372,8 +374,8 @@ class ConfigManager:
         questions = self.load_questions()
         question_ids = {q.id for q in questions}
         
-        # 检查是否所有问题都有答案
-        if not question_ids.issubset(answers.keys()):
+        # 如果要求所有问题都有答案
+        if require_all and not question_ids.issubset(answers.keys()):
             return False
         
         # 检查每个答案是否有效
