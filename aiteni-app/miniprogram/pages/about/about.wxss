@@ -1,88 +1,15 @@
 /* pages/about/about.wxss */
 
-.container {
+/* 根容器（使用全局.page-container类） */
+.page-container {
   min-height: 100vh;
   background: var(--bg-gray);
-}
-
-/* 导航栏样式同history页面 */
-.custom-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: var(--card-white);
-  border-bottom: 1rpx solid var(--border-gray);
-}
-
-.navbar-content {
-  height: 88rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12rpx;
-  padding: 0 32rpx;
-}
-
-.brand-mark {
-  position: relative;
-  width: 40rpx;
-  height: 40rpx;
-  border-radius: 12rpx;
-  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-soft));
-  overflow: hidden;
-}
-
-.brand-mark__i {
-  position: absolute;
-  left: 8rpx;
-  top: 8rpx;
-  width: 8rpx;
-  height: 16rpx;
-  border-radius: 999rpx;
-  background: #ffffff;
-  box-shadow: 0 16rpx 0 #ffffff;
-}
-
-.brand-mark__ball {
-  position: absolute;
-  right: 6rpx;
-  top: 10rpx;
-  width: 18rpx;
-  height: 18rpx;
-  border-radius: 50%;
-  background: var(--tennis-yellow);
-  box-shadow: 0 14rpx 0 rgba(255, 216, 74, 0.5);
-}
-
-.brand-mark__court {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 8rpx;
-  height: 4rpx;
-  background: #ffffff;
-}
-
-.brand-mark__court::before {
-  content: "";
-  position: absolute;
-  left: 14rpx;
-  top: -16rpx;
-  bottom: 0;
-  width: 4rpx;
-  background: #ffffff;
-}
-
-.navbar-title {
-  font-size: 32rpx;
-  font-weight: 600;
+  box-sizing: border-box;
 }
 
 /* 内容区 */
 .page-content {
-  padding: 24rpx 32rpx 48rpx;
+  padding: 32rpx;
 }
 
 /* Hero区域 */
@@ -339,4 +266,59 @@
   font-size: 24rpx;
   color: var(--text-sub);
   text-align: center;
+}
+
+/* 用户登录相关 */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx 0;
+}
+
+.user-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: var(--bg-gray);
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.user-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.user-status {
+  font-size: 24rpx;
+  color: var(--success-green);
+}
+
+.btn-text {
+  padding: 12rpx 24rpx;
+  font-size: 28rpx;
+  color: var(--text-sub);
+  background: none;
+  border: 1rpx solid var(--border-gray);
+  border-radius: 8rpx;
+}
+
+.login-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx 0;
+}
+
+.prompt-text {
+  font-size: 28rpx;
+  color: var(--text-sub);
 }

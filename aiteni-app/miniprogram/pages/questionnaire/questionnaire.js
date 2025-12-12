@@ -16,9 +16,8 @@ const DIMENSION_NAMES = {
 
 Page({
   data: {
-    statusBarHeight: 0,
-    navbarHeight: 88,
     isLoading: true,
+    safeTopPadding: 20, // 页面容器顶部安全留白（rpx）
     
     // 问卷数据
     questions: [],
@@ -37,14 +36,29 @@ Page({
   },
 
   onLoad(options) {
-    // 获取状态栏高度
-    const systemInfo = wx.getSystemInfoSync()
-    this.setData({
-      statusBarHeight: systemInfo.statusBarHeight || 0
-    })
-
+    // 初始化安全区域适配
+    this.initSafeArea();
     // 加载问卷数据
     this.loadQuestions()
+  },
+
+  /**
+   * 初始化安全区域适配
+   */
+  initSafeArea() {
+    try {
+      const systemInfo = wx.getSystemInfoSync();
+      const statusBarHeight = systemInfo.statusBarHeight || 20;
+      const navBarHeight = 44;
+      const totalHeightPx = statusBarHeight + navBarHeight;
+      const totalHeightRpx = totalHeightPx * 2;
+      const safeTopPadding = totalHeightRpx + 20;
+      
+      this.setData({ safeTopPadding });
+    } catch (error) {
+      console.error('[Questionnaire SafeArea] 适配失败：', error);
+      this.setData({ safeTopPadding: 120 });
+    }
   },
 
   /**

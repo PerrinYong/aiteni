@@ -1,96 +1,22 @@
 /* pages/welcome/welcome.wxss */
 
-.container {
+/* 根容器（使用全局.page-container类） */
+.page-container {
   min-height: 100vh;
   background: linear-gradient(180deg, #F0F7FF 0%, var(--bg-gray) 50%);
-}
-
-/* 自定义导航栏 */
-.custom-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: transparent;
-}
-
-.navbar-content {
-  height: 88rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12rpx;
-  padding: 0 32rpx;
-}
-
-.brand-mark {
-  position: relative;
-  width: 40rpx;
-  height: 40rpx;
-  border-radius: 12rpx;
-  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-soft));
-  overflow: hidden;
-}
-
-.brand-mark__i {
-  position: absolute;
-  left: 8rpx;
-  top: 8rpx;
-  width: 8rpx;
-  height: 16rpx;
-  border-radius: 999rpx;
-  background: #ffffff;
-  box-shadow: 0 16rpx 0 #ffffff;
-}
-
-.brand-mark__ball {
-  position: absolute;
-  right: 6rpx;
-  top: 10rpx;
-  width: 18rpx;
-  height: 18rpx;
-  border-radius: 50%;
-  background: var(--tennis-yellow);
-  box-shadow: 0 14rpx 0 rgba(255, 216, 74, 0.5);
-}
-
-.brand-mark__court {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 8rpx;
-  height: 4rpx;
-  background: #ffffff;
-}
-
-.brand-mark__court::before {
-  content: "";
-  position: absolute;
-  left: 14rpx;
-  top: -16rpx;
-  bottom: 0;
-  width: 4rpx;
-  background: #ffffff;
-}
-
-.navbar-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: var(--text-main);
+  box-sizing: border-box;
 }
 
 /* 主内容 */
 .welcome-content {
-  padding: 24rpx 32rpx 48rpx;
-  padding-top: calc(24rpx + 88rpx + var(--status-bar-height, 0));
+  padding: 0 32rpx 32rpx; /* 移除顶部padding，让标题与导航栏对齐 */
 }
 
 /* Hero区域 */
 .hero-section {
   position: relative;
   margin-bottom: 48rpx;
-  padding: 60rpx 0;
+  padding: 0 0 60rpx; /* 移除顶部padding，让标题紧贴导航栏 */
 }
 
 .hero-decoration {

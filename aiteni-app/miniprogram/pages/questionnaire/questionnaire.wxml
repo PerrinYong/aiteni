@@ -1,27 +1,6 @@
 <!--pages/questionnaire/questionnaire.wxml-->
-<view class="container">
-  <!-- 自定义导航栏 -->
-  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
-    <view class="navbar-content">
-      <view class="navbar-left">
-        <view class="icon-btn" bindtap="goBack">
-          <text class="icon-back">‹</text>
-        </view>
-      </view>
-      <view class="navbar-center">
-        <view class="brand-mark">
-          <view class="brand-mark__i"></view>
-          <view class="brand-mark__ball"></view>
-          <view class="brand-mark__court"></view>
-        </view>
-        <text class="navbar-title">NTRP 评测</text>
-      </view>
-      <view class="navbar-right">
-        <text class="question-counter">{{currentIndex + 1}}/{{totalQuestions}}</text>
-      </view>
-    </view>
-  </view>
-
+<!-- 根容器使用.page-container + 动态绑定安全留白 -->
+<view class="page-container" style="padding-top: {{safeTopPadding}}rpx;">
   <!-- 加载状态 -->
   <view wx:if="{{isLoading}}" class="loading-container">
     <view class="loading">
@@ -31,7 +10,7 @@
   </view>
 
   <!-- 问卷内容 -->
-  <view wx:else class="questionnaire-content" style="padding-top: {{navbarHeight + statusBarHeight}}px;">
+  <view wx:else class="questionnaire-content">
     <!-- 进度条 -->
     <view class="progress-bar-container">
       <view class="progress-bar">

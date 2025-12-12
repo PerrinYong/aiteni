@@ -51,20 +51,22 @@
 
 ### ✅ 已完成
 - 所有页面UI设计和实现
+- 标准微信导航栏（蓝色主题）
 - 完整的交互流程
 - 本地数据存储
 - 断点续答功能
+- 微信登录功能（在"关于"页面）
 
 ### ⚙️ 使用模拟数据
 以下功能当前使用模拟数据，等待后端API对接：
 
-1. **问卷配置** (`questionnaire.js` 第69行)
+1. **问卷配置** (`questionnaire.js` 第52行)
    ```javascript
    // 当前：模拟的2道问题
    // 待替换：从API获取完整12道问题
    ```
 
-2. **评估结果** (`questionnaire.js` 第309行)
+2. **评估结果** (`questionnaire.js` 第292行)
    ```javascript
    // 当前：返回固定的模拟结果
    // 待替换：调用后端评估API
@@ -72,8 +74,8 @@
 
 3. **用户登录**
    ```javascript
-   // 当前：未实现
-   // 待实现：微信登录 + Token管理
+   // 已实现：微信登录功能（app.js）
+   // 待对接：后端登录API，获取openId和sessionKey
    ```
 
 ---
@@ -231,6 +233,17 @@ aiteni-app/
 ---
 
 ## 🎨 自定义配置
+
+### 修改导航栏颜色
+编辑 `app.json`，修改导航栏配置：
+
+```json
+"window": {
+  "navigationBarBackgroundColor": "#1D7CF2",  // 导航栏背景色
+  "navigationBarTitleText": "爱特尼网球评测",  // 标题文字
+  "navigationBarTextStyle": "white"           // 标题文字颜色（white/black）
+}
+```
 
 ### 修改主题色
 编辑 `app.wxss`，修改 CSS 变量：

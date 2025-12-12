@@ -1,5 +1,16 @@
 /**app.wxss - 全局样式**/
+
+/* ==================== 基础重置样式 ==================== */
+/* 重置page默认样式，统一机型适配基础 */
 page {
+  /* 防止内容溢出到顶部原生区域（小程序icon、三点按钮） */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* 防止padding/margin导致宽度溢出 */
+  overflow-x: hidden; /* 禁止横向溢出 */
+  overflow-y: auto; /* 纵向滚动正常 */
+  
+  /* CSS变量定义 */
   --primary-blue: #1D7CF2;
   --primary-blue-soft: #2A8CFF;
   --primary-green: #1FA27A;
@@ -20,11 +31,22 @@ page {
   line-height: 1.5;
 }
 
-/* 通用容器 */
+/* ==================== 通用页面容器（防溢出） ==================== */
+/* 所有页面外层容器，必须套此类避免内容贴顶 */
+.page-container {
+  width: 100%;
+  min-height: 100vh; /* 占满屏幕高度，避免布局塌陷 */
+  box-sizing: border-box;
+  padding-top: 20rpx; /* 兜底留白，避免内容直接贴到原生导航栏底部 */
+  padding-bottom: 20rpx;
+}
+
+/* 通用容器（兼容旧代码） */
 .container {
   width: 100%;
   min-height: 100vh;
   background: var(--bg-gray);
+  box-sizing: border-box;
 }
 
 .page-wrapper {

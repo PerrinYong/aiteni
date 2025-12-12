@@ -9,10 +9,9 @@
   "window": {
     "backgroundColor": "#F5F7FA",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarBackgroundColor": "#1D7CF2",
     "navigationBarTitleText": "爱特尼网球评测",
-    "navigationBarTextStyle": "black",
-    "navigationStyle": "custom"
+    "navigationBarTextStyle": "white"
   },
   "tabBar": {
     "color": "#6B7280",

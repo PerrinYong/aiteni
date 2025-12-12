@@ -1,19 +1,37 @@
 // pages/welcome/welcome.js
 Page({
   data: {
-    statusBarHeight: 0,
-    hasHistory: false
+    hasHistory: false,
+    safeTopPadding: 20 // 页面容器顶部安全留白（rpx）
   },
 
   onLoad(options) {
-    // 获取状态栏高度
-    const systemInfo = wx.getSystemInfoSync()
-    this.setData({
-      statusBarHeight: systemInfo.statusBarHeight || 0
-    })
-
+    // 初始化安全区域适配
+    this.initSafeArea();
     // 检查是否有历史记录
     this.checkHistory()
+  },
+
+  /**
+   * 初始化安全区域适配（首页特殊处理：减少顶部留白）
+   * 首页标题可以与导航栏顶部对齐，无需额外留白
+   */
+  initSafeArea() {
+    try {
+      const systemInfo = wx.getSystemInfoSync();
+      const statusBarHeight = systemInfo.statusBarHeight || 20;
+      const navBarHeight = 44; // 原生导航栏高度
+      const totalHeightPx = statusBarHeight + navBarHeight;
+      // px转rpx：简化方案 1px ≈ 2rpx
+      const totalHeightRpx = totalHeightPx * 2;
+      // 首页留白 = 导航栏总高度（无额外边距，让标题与导航栏对齐）
+      const safeTopPadding = totalHeightRpx - 40; // 减少留白，让内容更紧凑
+      
+      this.setData({ safeTopPadding });
+    } catch (error) {
+      console.error('[Welcome SafeArea] 适配失败：', error);
+      this.setData({ safeTopPadding: 80 }); // 降级默认值（更小）
+    }
   },
 
   onShow() {
