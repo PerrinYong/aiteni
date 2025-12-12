@@ -1,0 +1,138 @@
+<!--pages/about/about.wxml-->
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="navbar-content">
+      <view class="brand-mark">
+        <view class="brand-mark__i"></view>
+        <view class="brand-mark__ball"></view>
+        <view class="brand-mark__court"></view>
+      </view>
+      <text class="navbar-title">关于</text>
+    </view>
+  </view>
+
+  <!-- 内容区 -->
+  <view class="page-content" style="padding-top: {{navbarHeight + statusBarHeight}}px;">
+    <!-- 品牌介绍 -->
+    <view class="about-hero">
+      <view class="app-icon">
+        <view class="icon-large">
+          <view class="icon-large__i"></view>
+          <view class="icon-large__ball"></view>
+          <view class="icon-large__court"></view>
+        </view>
+      </view>
+      <text class="app-name">Ai-TEni 爱特尼网球</text>
+      <text class="app-version">v1.0.0</text>
+      <text class="app-slogan">让每位球友都能找到真实的网球水平</text>
+    </view>
+
+    <!-- NTRP介绍 -->
+    <view class="card card-soft">
+      <view class="card-title">
+        <text class="emoji-icon">🎾</text>
+        <text class="h3">什么是 NTRP？</text>
+      </view>
+      <text class="card-content">
+        NTRP（National Tennis Rating Program）是美国网球协会（USTA）创建的网球水平分级系统，是目前国际上最通用的网球水平评定标准。
+      </text>
+      <text class="card-content">
+        等级从 1.0（初学者）到 7.0（世界级职业选手），每个等级都有明确的技术、战术和实战能力标准。
+      </text>
+    </view>
+
+    <!-- 功能特色 -->
+    <view class="card card-soft">
+      <view class="card-title">
+        <text class="emoji-icon">✨</text>
+        <text class="h3">功能特色</text>
+      </view>
+      
+      <view class="feature-list">
+        <view class="feature-item">
+          <view class="feature-icon-wrap">
+            <text class="feature-icon">🎯</text>
+          </view>
+          <view class="feature-text">
+            <text class="feature-name">多维度评估</text>
+            <text class="feature-desc">从底线、发球、网前等10个维度全面评估</text>
+          </view>
+        </view>
+        
+        <view class="feature-item">
+          <view class="feature-icon-wrap">
+            <text class="feature-icon">📊</text>
+          </view>
+          <view class="feature-text">
+            <text class="feature-name">科学评分机制</text>
+            <text class="feature-desc">基于模糊评分算法，更贴近真实水平</text>
+          </view>
+        </view>
+        
+        <view class="feature-item">
+          <view class="feature-icon-wrap">
+            <text class="feature-icon">💪</text>
+          </view>
+          <view class="feature-text">
+            <text class="feature-name">个性化建议</text>
+            <text class="feature-desc">针对性指出优势和短板，提供训练建议</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 使用说明 -->
+    <view class="card card-soft">
+      <view class="card-title">
+        <text class="emoji-icon">📖</text>
+        <text class="h3">使用说明</text>
+      </view>
+      
+      <view class="steps-list">
+        <view class="step-item">
+          <view class="step-number">1</view>
+          <text class="step-text">根据真实情况回答12道问题</text>
+        </view>
+        <view class="step-item">
+          <view class="step-number">2</view>
+          <text class="step-text">系统自动计算NTRP等级</text>
+        </view>
+        <view class="step-item">
+          <view class="step-number">3</view>
+          <text class="step-text">查看详细分析报告和训练建议</text>
+        </view>
+      </view>
+
+      <view class="tip-box">
+        <text class="tip-icon">💡</text>
+        <text class="tip-text">建议每3-6个月重新评测一次，跟踪自己的进步</text>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="card card-soft">
+      <view class="card-title">
+        <text class="emoji-icon">📧</text>
+        <text class="h3">联系我们</text>
+      </view>
+      
+      <view class="contact-list">
+        <view class="contact-item">
+          <text class="contact-label">开发团队</text>
+          <text class="contact-value">AiTeni Team</text>
+        </view>
+        <view class="contact-item">
+          <text class="contact-label">技术支持</text>
+          <text class="contact-value">support@aiteni.com</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部版权 -->
+    <view class="footer">
+      <text class="footer-text">© 2024 Ai-TEni 爱特尼网球</text>
+      <text class="footer-text">让网球训练更科学</text>
+    </view>
+  </view>
+</view>

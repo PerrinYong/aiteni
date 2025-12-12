@@ -1,0 +1,58 @@
+<!--pages/history/history.wxml-->
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="navbar-content">
+      <view class="brand-mark">
+        <view class="brand-mark__i"></view>
+        <view class="brand-mark__ball"></view>
+        <view class="brand-mark__court"></view>
+      </view>
+      <text class="navbar-title">评测记录</text>
+    </view>
+  </view>
+
+  <!-- 内容区 -->
+  <view class="page-content" style="padding-top: {{navbarHeight + statusBarHeight}}px;">
+    <!-- 空状态 -->
+    <view wx:if="{{history.length === 0}}" class="empty-state">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">还没有评测记录</text>
+      <button class="btn-primary" style="width: 400rpx; margin-top: 40rpx;" bindtap="startTest">
+        开始评测
+      </button>
+    </view>
+
+    <!-- 历史记录列表 -->
+    <view wx:else class="history-list">
+      <view
+        wx:for="{{history}}"
+        wx:key="id"
+        class="history-card card card-soft"
+        bindtap="viewResult"
+        data-result-id="{{item.id}}"
+      >
+        <view class="history-header">
+          <view class="history-level">
+            <text class="level-badge">{{item.overallLevel}}</text>
+            <text class="level-label">{{item.levelLabel}}</text>
+          </view>
+          <text class="history-date">{{item.dateText}}</text>
+        </view>
+
+        <view class="history-tags">
+          <text
+            wx:for="{{item.topDimensions}}"
+            wx:key="*this"
+            wx:for-item="tag"
+            class="chip chip-blue"
+          >{{tag}}</text>
+        </view>
+
+        <view class="history-footer">
+          <text class="view-detail">查看详情 →</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

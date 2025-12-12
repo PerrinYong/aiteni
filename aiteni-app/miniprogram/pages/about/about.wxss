@@ -1,0 +1,342 @@
+/* pages/about/about.wxss */
+
+.container {
+  min-height: 100vh;
+  background: var(--bg-gray);
+}
+
+/* 导航栏样式同history页面 */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--card-white);
+  border-bottom: 1rpx solid var(--border-gray);
+}
+
+.navbar-content {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 0 32rpx;
+}
+
+.brand-mark {
+  position: relative;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 12rpx;
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-soft));
+  overflow: hidden;
+}
+
+.brand-mark__i {
+  position: absolute;
+  left: 8rpx;
+  top: 8rpx;
+  width: 8rpx;
+  height: 16rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  box-shadow: 0 16rpx 0 #ffffff;
+}
+
+.brand-mark__ball {
+  position: absolute;
+  right: 6rpx;
+  top: 10rpx;
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: var(--tennis-yellow);
+  box-shadow: 0 14rpx 0 rgba(255, 216, 74, 0.5);
+}
+
+.brand-mark__court {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8rpx;
+  height: 4rpx;
+  background: #ffffff;
+}
+
+.brand-mark__court::before {
+  content: "";
+  position: absolute;
+  left: 14rpx;
+  top: -16rpx;
+  bottom: 0;
+  width: 4rpx;
+  background: #ffffff;
+}
+
+.navbar-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+/* 内容区 */
+.page-content {
+  padding: 24rpx 32rpx 48rpx;
+}
+
+/* Hero区域 */
+.about-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0;
+  margin-bottom: 24rpx;
+}
+
+.app-icon {
+  margin-bottom: 32rpx;
+}
+
+.icon-large {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 40rpx;
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-soft));
+  box-shadow: 0 20rpx 60rpx rgba(29, 124, 242, 0.4);
+}
+
+.icon-large__i {
+  position: absolute;
+  left: 32rpx;
+  top: 32rpx;
+  width: 16rpx;
+  height: 32rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  box-shadow: 0 64rpx 0 #ffffff;
+}
+
+.icon-large__ball {
+  position: absolute;
+  right: 24rpx;
+  top: 40rpx;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: var(--tennis-yellow);
+  box-shadow: 0 56rpx 0 rgba(255, 216, 74, 0.5);
+}
+
+.icon-large__court {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 32rpx;
+  height: 8rpx;
+  background: #ffffff;
+}
+
+.icon-large__court::before {
+  content: "";
+  position: absolute;
+  left: 56rpx;
+  top: -64rpx;
+  bottom: 0;
+  width: 8rpx;
+  background: #ffffff;
+}
+
+.app-name {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8rpx;
+}
+
+.app-version {
+  font-size: 24rpx;
+  color: var(--text-sub);
+  margin-bottom: 16rpx;
+}
+
+.app-slogan {
+  font-size: 26rpx;
+  color: var(--text-sub);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 500rpx;
+}
+
+/* 卡片内容 */
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.emoji-icon {
+  font-size: 40rpx;
+}
+
+.card-content {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: var(--text-sub);
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.card-content:last-child {
+  margin-bottom: 0;
+}
+
+/* 功能列表 */
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.feature-item {
+  display: flex;
+  gap: 20rpx;
+}
+
+.feature-icon-wrap {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(29, 124, 242, 0.1), rgba(42, 140, 255, 0.15));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-icon {
+  font-size: 48rpx;
+}
+
+.feature-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding-top: 8rpx;
+}
+
+.feature-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  display: block;
+}
+
+.feature-desc {
+  font-size: 26rpx;
+  color: var(--text-sub);
+  line-height: 1.5;
+  display: block;
+}
+
+/* 步骤列表 */
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.step-number {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-soft));
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: var(--text-main);
+}
+
+.tip-box {
+  background: rgba(29, 124, 242, 0.05);
+  border-radius: 16rpx;
+  padding: 20rpx;
+  display: flex;
+  gap: 12rpx;
+}
+
+.tip-icon {
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: var(--text-sub);
+}
+
+/* 联系方式 */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.contact-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid var(--border-gray);
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-label {
+  font-size: 28rpx;
+  color: var(--text-sub);
+}
+
+.contact-value {
+  font-size: 28rpx;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+/* 底部版权 */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 48rpx 0 24rpx;
+}
+
+.footer-text {
+  font-size: 24rpx;
+  color: var(--text-sub);
+  text-align: center;
+}

@@ -1,0 +1,186 @@
+<!--pages/result/result.wxml-->
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="navbar-content">
+      <view class="navbar-left">
+        <view class="icon-btn" bindtap="goBack">
+          <text class="icon-back">‹</text>
+        </view>
+      </view>
+      <view class="navbar-center">
+        <view class="brand-mark">
+          <view class="brand-mark__i"></view>
+          <view class="brand-mark__ball"></view>
+          <view class="brand-mark__court"></view>
+        </view>
+        <text class="navbar-title">评估结果</text>
+      </view>
+      <view class="navbar-right">
+        <view class="icon-btn" bindtap="shareResult">
+          <text class="icon-share">⤴</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{isLoading}}" class="loading-container">
+    <view class="loading">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">生成评估结果中...</text>
+    </view>
+  </view>
+
+  <!-- 结果内容 -->
+  <view wx:else class="result-content" style="padding-top: {{navbarHeight + statusBarHeight}}px;">
+    <!-- Hero卡片 - NTRP等级 -->
+    <view class="card card-hero">
+      <view class="hero-ball-shadow"></view>
+      
+      <view class="card-summary">
+        <view class="summary-left">
+          <view class="summary-level-title">
+            <text class="h1">NTRP {{result.overallLevel}}</text>
+            <text class="summary-level-subtitle">{{result.levelLabel}}</text>
+          </view>
+          
+          <view class="chip-row">
+            <text
+              wx:for="{{result.advantageTags}}"
+              wx:key="*this"
+              class="chip chip-blue"
+            >{{item}}</text>
+          </view>
+          
+          <text class="summary-note caption">
+            数据基于你的问卷作答，仅供训练参考。
+          </text>
+        </view>
+        
+        <view class="summary-right">
+          <view class="badge-level">
+            <text class="badge-level-main">{{result.overallLevel}}</text>
+            <text class="badge-level-sub">NTRP</text>
+            <view class="badge-ball">🎾</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分割线 -->
+    <view class="section-divider">
+      <text class="section-divider-title">整体概览</text>
+      <view class="section-divider-line"></view>
+    </view>
+
+    <!-- 优势卡片 -->
+    <view class="card card-soft">
+      <view class="card-header">
+        <view class="card-header-title">
+          <text class="emoji-icon">💪</text>
+          <text class="h3">你的主要优势</text>
+        </view>
+        <view class="status-dot status-dot-green"></view>
+      </view>
+      
+      <view class="list">
+        <view
+          wx:for="{{result.advantages}}"
+          wx:key="name"
+          class="list-item {{index > 0 ? 'has-border' : ''}}"
+        >
+          <view class="list-icon list-icon-adv">🎾</view>
+          <view class="list-body">
+            <view class="list-text-main">
+              <text>{{item.name}}（约 {{item.score}} 级）</text>
+              <text class="tag tag-strong">优势</text>
+            </view>
+            <text class="list-text-sub">{{item.description}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提升重点卡片 -->
+    <view class="card card-soft">
+      <view class="card-header">
+        <view class="card-header-title">
+          <text class="emoji-icon">🎯</text>
+          <text class="h3">当前最值得优先提升的环节</text>
+        </view>
+        <view class="status-dot status-dot-orange"></view>
+      </view>
+      
+      <view class="list">
+        <view
+          wx:for="{{result.weaknesses}}"
+          wx:key="name"
+          class="list-item {{index > 0 ? 'has-border' : ''}}"
+        >
+          <view class="list-icon list-icon-weak">🎯</view>
+          <view class="list-body">
+            <view class="list-text-main">
+              <text>{{item.name}}（约 {{item.score}} 级）</text>
+              <text class="tag tag-weak">短板</text>
+            </view>
+            <text class="list-text-sub">{{item.description}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="hint-text">
+        如果你只想抓重点练习，建议先在以上 2–3 个环节上持续投入时间，效果会最明显。
+      </view>
+    </view>
+
+    <!-- 各维度详细评估 -->
+    <view class="card card-soft">
+      <view class="card-header">
+        <view class="card-header-title">
+          <text class="emoji-icon">📝</text>
+          <text class="h3">各维度详细评估与建议</text>
+        </view>
+      </view>
+
+      <view class="dimensions-list">
+        <view
+          wx:for="{{result.dimensionDetails}}"
+          wx:key="name"
+          class="dimension-row {{item.expanded ? 'open' : ''}}"
+          bindtap="toggleDimension"
+          data-index="{{index}}"
+        >
+          <view class="dimension-main">
+            <view class="dimension-info">
+              <text class="dimension-name">{{item.name}}</text>
+              <text class="dimension-sub">约 {{item.score}} 级 · {{item.subtitle}}</text>
+            </view>
+            <text class="tag {{item.tagClass}} dimension-tag">{{item.tagText}}</text>
+            <view class="chevron">⌃</view>
+          </view>
+          
+          <view class="dimension-detail">
+            <view class="dimension-detail-inner">
+              <text>{{item.detail}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作区域 -->
+      <view class="action-area">
+        <text class="action-text">
+          想把这些评估转化为具体训练内容？可以根据结果自动生成一份你的专属练习清单。
+        </text>
+        <button class="btn-primary" bindtap="getTrainingPlan">
+          查看训练建议
+        </button>
+        <button class="btn-text" bindtap="shareResult">
+          分享结果给教练
+          <text class="btn-text-icon">⤴</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

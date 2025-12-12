@@ -1,0 +1,327 @@
+/* pages/welcome/welcome.wxss */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F0F7FF 0%, var(--bg-gray) 50%);
+}
+
+/* 自定义导航栏 */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: transparent;
+}
+
+.navbar-content {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 0 32rpx;
+}
+
+.brand-mark {
+  position: relative;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 12rpx;
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-soft));
+  overflow: hidden;
+}
+
+.brand-mark__i {
+  position: absolute;
+  left: 8rpx;
+  top: 8rpx;
+  width: 8rpx;
+  height: 16rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  box-shadow: 0 16rpx 0 #ffffff;
+}
+
+.brand-mark__ball {
+  position: absolute;
+  right: 6rpx;
+  top: 10rpx;
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: var(--tennis-yellow);
+  box-shadow: 0 14rpx 0 rgba(255, 216, 74, 0.5);
+}
+
+.brand-mark__court {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8rpx;
+  height: 4rpx;
+  background: #ffffff;
+}
+
+.brand-mark__court::before {
+  content: "";
+  position: absolute;
+  left: 14rpx;
+  top: -16rpx;
+  bottom: 0;
+  width: 4rpx;
+  background: #ffffff;
+}
+
+.navbar-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* 主内容 */
+.welcome-content {
+  padding: 24rpx 32rpx 48rpx;
+  padding-top: calc(24rpx + 88rpx + var(--status-bar-height, 0));
+}
+
+/* Hero区域 */
+.hero-section {
+  position: relative;
+  margin-bottom: 48rpx;
+  padding: 60rpx 0;
+}
+
+.hero-decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200rpx;
+  height: 200rpx;
+  opacity: 0.15;
+}
+
+.hero-ball {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #FFEFA3 0, var(--tennis-yellow) 52%, #F4C938 100%);
+}
+
+.hero-court-line {
+  position: absolute;
+  bottom: 40rpx;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: var(--primary-blue);
+}
+
+.hero-text {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 48rpx;
+}
+
+.hero-title {
+  display: block;
+  font-size: 56rpx;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-main);
+  margin-bottom: 16rpx;
+  white-space: pre-line;
+}
+
+.hero-subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: var(--text-sub);
+  line-height: 1.5;
+}
+
+.hero-features {
+  display: flex;
+  gap: 24rpx;
+}
+
+.feature-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 24rpx 12rpx;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16rpx;
+  backdrop-filter: blur(10rpx);
+}
+
+.feature-icon {
+  font-size: 48rpx;
+}
+
+.feature-text {
+  font-size: 22rpx;
+  color: var(--text-sub);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* NTRP介绍卡片 */
+.ntrp-intro {
+  margin-bottom: 24rpx;
+}
+
+.intro-header {
+  margin-bottom: 16rpx;
+}
+
+.intro-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.intro-text {
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: var(--text-sub);
+}
+
+.level-examples {
+  display: flex;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.level-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.level-badge {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.15);
+}
+
+.level-beginner {
+  background: linear-gradient(135deg, #10B981, #34D399);
+}
+
+.level-amateur {
+  background: linear-gradient(135deg, #3B82F6, #60A5FA);
+}
+
+.level-advanced {
+  background: linear-gradient(135deg, #F59E0B, #FBBF24);
+}
+
+.level-pro {
+  background: linear-gradient(135deg, #EF4444, #F87171);
+}
+
+.level-num {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.level-desc {
+  font-size: 22rpx;
+  color: var(--text-sub);
+  text-align: center;
+}
+
+/* 评测说明 */
+.test-info {
+  margin-bottom: 32rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 0;
+}
+
+.info-row + .info-row {
+  border-top: 1rpx solid var(--border-gray);
+}
+
+.info-icon {
+  font-size: 48rpx;
+  width: 60rpx;
+  text-align: center;
+}
+
+.info-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.info-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.info-desc {
+  font-size: 24rpx;
+  color: var(--text-sub);
+}
+
+/* 操作区域 */
+.action-area {
+  margin-top: 48rpx;
+}
+
+.start-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.btn-arrow {
+  font-size: 32rpx;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.start-btn:active .btn-arrow {
+  transform: translateX(4rpx);
+}
+
+.secondary-actions {
+  display: flex;
+  justify-content: center;
+  padding: 16rpx 0;
+}
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: var(--primary-blue);
+  font-size: 26rpx;
+  font-weight: 500;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+}

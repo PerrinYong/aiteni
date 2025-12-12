@@ -1,0 +1,121 @@
+<!--pages/welcome/welcome.wxml-->
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="navbar-content">
+      <view class="brand-mark">
+        <view class="brand-mark__i"></view>
+        <view class="brand-mark__ball"></view>
+        <view class="brand-mark__court"></view>
+      </view>
+      <text class="navbar-title">爱特尼网球</text>
+    </view>
+  </view>
+
+  <!-- 主内容区 -->
+  <view class="welcome-content">
+    <!-- Hero区域 -->
+    <view class="hero-section">
+      <view class="hero-decoration">
+        <view class="hero-ball"></view>
+        <view class="hero-court-line"></view>
+      </view>
+      
+      <view class="hero-text">
+        <text class="hero-title">发现你的\n真实网球水平</text>
+        <text class="hero-subtitle">基于 NTRP 国际标准的专业评测系统</text>
+      </view>
+
+      <view class="hero-features">
+        <view class="feature-item">
+          <text class="feature-icon">🎯</text>
+          <text class="feature-text">多维度科学评估</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">📊</text>
+          <text class="feature-text">专业数据分析</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">💪</text>
+          <text class="feature-text">个性化训练建议</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- NTRP等级卡片 -->
+    <view class="ntrp-intro card">
+      <view class="intro-header">
+        <text class="h3">什么是 NTRP？</text>
+      </view>
+      <view class="intro-content">
+        <text class="intro-text">NTRP（National Tennis Rating Program）是国际通用的网球水平分级标准，从1.0到7.0共分为14个级别，帮助球友准确定位自己的技术水平。</text>
+        
+        <view class="level-examples">
+          <view class="level-item">
+            <view class="level-badge level-beginner">
+              <text class="level-num">2.5</text>
+            </view>
+            <text class="level-desc">初学者</text>
+          </view>
+          <view class="level-item">
+            <view class="level-badge level-amateur">
+              <text class="level-num">3.5</text>
+            </view>
+            <text class="level-desc">业余选手</text>
+          </view>
+          <view class="level-item">
+            <view class="level-badge level-advanced">
+              <text class="level-num">4.5</text>
+            </view>
+            <text class="level-desc">高级选手</text>
+          </view>
+          <view class="level-item">
+            <view class="level-badge level-pro">
+              <text class="level-num">6.0</text>
+            </view>
+            <text class="level-desc">职业水平</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评测说明卡片 -->
+    <view class="test-info card card-soft">
+      <view class="info-row">
+        <text class="info-icon">⏱️</text>
+        <view class="info-text">
+          <text class="info-title">约5-8分钟</text>
+          <text class="info-desc">12道精选问题</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">🎾</text>
+        <view class="info-text">
+          <text class="info-title">10个维度</text>
+          <text class="info-desc">底线、发球、网前等全面评估</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">📈</text>
+        <view class="info-text">
+          <text class="info-title">个性化报告</text>
+          <text class="info-desc">优势分析 + 提升建议</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 开始按钮 -->
+    <view class="action-area">
+      <button class="btn-primary start-btn" bindtap="startTest">
+        <text>开始评测</text>
+        <text class="btn-arrow">→</text>
+      </button>
+      
+      <view wx:if="{{hasHistory}}" class="secondary-actions">
+        <button class="btn-text" bindtap="viewHistory">
+          <text>查看历史记录</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

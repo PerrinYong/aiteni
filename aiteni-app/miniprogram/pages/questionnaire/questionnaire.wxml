@@ -1,0 +1,104 @@
+<!--pages/questionnaire/questionnaire.wxml-->
+<view class="container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="navbar-content">
+      <view class="navbar-left">
+        <view class="icon-btn" bindtap="goBack">
+          <text class="icon-back">‹</text>
+        </view>
+      </view>
+      <view class="navbar-center">
+        <view class="brand-mark">
+          <view class="brand-mark__i"></view>
+          <view class="brand-mark__ball"></view>
+          <view class="brand-mark__court"></view>
+        </view>
+        <text class="navbar-title">NTRP 评测</text>
+      </view>
+      <view class="navbar-right">
+        <text class="question-counter">{{currentIndex + 1}}/{{totalQuestions}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{isLoading}}" class="loading-container">
+    <view class="loading">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载问卷中...</text>
+    </view>
+  </view>
+
+  <!-- 问卷内容 -->
+  <view wx:else class="questionnaire-content" style="padding-top: {{navbarHeight + statusBarHeight}}px;">
+    <!-- 进度条 -->
+    <view class="progress-bar-container">
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progress}}%;"></view>
+      </view>
+      <text class="progress-text">{{progress}}% 完成</text>
+    </view>
+
+    <!-- 问题卡片 -->
+    <view class="question-card card" animation="{{questionAnimation}}">
+      <view class="question-header">
+        <view class="question-badge">
+          <text class="question-number">Q{{currentIndex + 1}}</text>
+        </view>
+        <view class="question-dimension">
+          <text class="dimension-tag chip chip-blue">{{currentQuestion.dimensionName}}</text>
+        </view>
+      </view>
+
+      <view class="question-content">
+        <text class="question-text">{{currentQuestion.text}}</text>
+      </view>
+
+      <!-- 选项列表 -->
+      <view class="options-list">
+        <view
+          wx:for="{{currentQuestion.options}}"
+          wx:key="id"
+          class="option-item {{selectedAnswer === item.id ? 'selected' : ''}}"
+          bindtap="selectOption"
+          data-option-id="{{item.id}}"
+        >
+          <view class="option-radio">
+            <view wx:if="{{selectedAnswer === item.id}}" class="radio-checked">
+              <text class="radio-icon">✓</text>
+            </view>
+            <view wx:else class="radio-unchecked"></view>
+          </view>
+          <view class="option-content">
+            <text class="option-text">{{item.text}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部导航 -->
+    <view class="bottom-nav">
+      <button
+        wx:if="{{currentIndex > 0}}"
+        class="btn-secondary nav-btn"
+        bindtap="prevQuestion"
+      >
+        <text>上一题</text>
+      </button>
+      <button
+        class="btn-primary nav-btn {{!selectedAnswer ? 'disabled' : ''}}"
+        bindtap="nextQuestion"
+        disabled="{{!selectedAnswer}}"
+      >
+        <text>{{isLastQuestion ? '提交评测' : '下一题'}}</text>
+      </button>
+    </view>
+
+    <!-- 提示信息 -->
+    <view class="hint-text">
+      <text class="hint-icon">💡</text>
+      <text>请根据你的真实情况选择，评测结果更准确</text>
+    </view>
+  </view>
+</view>
