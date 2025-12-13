@@ -24,6 +24,9 @@
       <view class="question-header">
         <view class="question-badge">
           <text class="question-number">Q{{currentIndex + 1}}</text>
+          <text class="question-tier {{currentQuestionTier === 'advanced' ? 'tier-advanced' : 'tier-basic'}}">
+            {{currentQuestionTier === 'advanced' ? '进阶题' : '基础题'}}
+          </text>
         </view>
         <view class="question-dimension">
           <text class="dimension-tag chip chip-blue">{{currentQuestion.dimensionName}}</text>

@@ -158,7 +158,8 @@ const evaluationAPI = {
     return request({
       url: '/evaluation/basic',
       method: 'POST',
-      data: { answers }
+      data: { answers },
+      needAuth: false
     })
   },
 
@@ -171,8 +172,16 @@ const evaluationAPI = {
     return request({
       url: '/evaluation/full',
       method: 'POST',
-      data: { answers }
+      data: { answers },
+      needAuth: false
     })
+  },
+
+  /**
+   * 提交评测答案（兼容旧接口）
+   */
+  submit(answers) {
+    return this.evaluateFull(answers)
   },
 
   /**

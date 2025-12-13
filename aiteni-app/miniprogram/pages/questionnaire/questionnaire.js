@@ -12,7 +12,8 @@ Page({
     progress: 0,             // 答题进度
     isSubmitting: false,     // 是否正在提交
     isLoading: true,         // 是否正在加载
-    selectedAnswer: ''       // 当前选中的答案
+    selectedAnswer: '',      // 当前选中的答案
+    currentQuestionTier: ''  // 当前题目类型（basic/advanced）
   },
 
   onLoad(options) {
@@ -190,12 +191,14 @@ Page({
     if (currentIndex >= 0 && currentIndex < questions.length) {
       const currentQuestion = questions[currentIndex];
       const selectedAnswer = answers[currentQuestion.id] || '';
+      const currentQuestionTier = currentQuestion.question_tier || 'basic';
       
-      console.log('[问卷页] 切换到题目:', currentIndex + 1, '/', questions.length);
+      console.log('[问卷页] 切换到题目:', currentIndex + 1, '/', questions.length, '类型:', currentQuestionTier);
       
       this.setData({
         currentQuestion,
         selectedAnswer,
+        currentQuestionTier,
         isLastQuestion: currentIndex === questions.length - 1
       });
     }
@@ -322,7 +325,7 @@ Page({
         await this.submitAdvancedStage();
       }
     } catch (error) {
-      console.error('提交失败:', error);
+      console.error('[问卷页] 提交失败:', error);
       wx.showModal({
         title: '提交失败',
         content: '网络连接失败，请检查网络后重试',
@@ -345,9 +348,13 @@ Page({
   async submitBasicStage() {
     const { answers } = this.data;
     
+    console.log('[问卷页] 提交基础题，答案数量:', Object.keys(answers).length);
+    
     try {
       // 调用基础评估接口
       const result = await api.evaluation.evaluateBasic(answers);
+      
+      console.log('[问卷页] 基础评估结果:', result);
       
       // 保存基础题答案，用于后续合并
       this.setData({ basicAnswers: answers });
@@ -366,17 +373,15 @@ Page({
               // 继续进阶题
               this.loadAdvancedQuestions();
             } else {
-              // 返回首页
-              wx.switchTab({
-                url: '/pages/welcome/welcome'
-              });
+              // 用户取消，使用基础评估结果跳转到结果页
+              this.navigateToResult(result);
             }
           }
         });
       } else {
-        // 不需要进阶题，提交完整评估获取详细结果
-        const fullResult = await api.evaluation.evaluateFull(answers);
-        this.navigateToResult(fullResult);
+        // 水平较低，不需要进阶题，直接使用基础评估结果
+        console.log('[问卷页] 水平较低，直接使用基础评估结果');
+        this.navigateToResult(result);
       }
     } catch (error) {
       throw error;
@@ -387,6 +392,8 @@ Page({
    * 加载进阶题
    */
   async loadAdvancedQuestions() {
+    console.log('[问卷页] 切换到进阶题阶段');
+    
     this.setData({
       stage: 'advanced',
       currentIndex: 0,
@@ -416,9 +423,13 @@ Page({
       ...advancedAnswers
     };
     
+    console.log('[问卷页] 提交完整答案，数量:', Object.keys(allAnswers).length);
+    
     try {
       // 调用完整评估接口
       const result = await api.evaluation.evaluateFull(allAnswers);
+      
+      console.log('[问卷页] 完整评估结果:', result);
       
       // 跳转到结果页
       this.navigateToResult(result);
@@ -431,6 +442,8 @@ Page({
    * 跳转到结果页
    */
   navigateToResult(result) {
+    console.log('[问卷页] 跳转到结果页');
+    
     // 缓存结果
     wx.setStorageSync('latest_result', result);
     
