@@ -2,9 +2,12 @@
 
 /* 根容器（使用全局.page-container类） */
 .page-container {
-  min-height: 100vh;
+  height: 100vh;
   background: var(--bg-gray);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* 加载状态 */
@@ -12,17 +15,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 100%;
 }
 
 /* 问卷内容 */
 .questionnaire-content {
-  padding: 24rpx 32rpx 48rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 固定顶部区域 */
+.fixed-header {
+  padding: 0 32rpx;
+  background: var(--bg-gray);
+  z-index: 10;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02); /* 极淡的阴影，区分层级 */
+}
+
+/* 可滚动答案区域 */
+.scroll-answers {
+  flex: 1;
+  padding: 24rpx 32rpx 0;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* 底部占位，防止内容被固定按钮遮挡 */
+.bottom-placeholder {
+  height: 200rpx;
 }
 
 /* 进度条 */
 .progress-bar-container {
-  margin-bottom: 32rpx;
+  margin-bottom: 24rpx;
 }
 
 .progress-bar {
@@ -48,44 +76,46 @@
   text-align: right;
 }
 
-/* 问题卡片 */
-.question-card {
-  margin-bottom: 32rpx;
+/* 问题头部区域（纯文本，无卡片背景） */
+.question-header-area {
+  margin-bottom: 0;
+  padding-bottom: 24rpx;
+  position: relative;
+  z-index: 2;
 }
 
 .question-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24rpx;
+  margin-bottom: 16rpx;
 }
 
-.question-badge {
+.question-title-group {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8rpx;
+  align-items: flex-end; /* 底部对齐，消除视觉落差 */
+  gap: 16rpx;
+  height: 60rpx; /* 固定高度 */
 }
 
 .question-number {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-soft));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8rpx 20rpx rgba(29, 124, 242, 0.3);
-  font-size: 28rpx;
-  font-weight: 700;
-  color: #FFFFFF;
+  font-size: 60rpx; /* 加大字号，增强存在感 */
+  font-weight: 800;
+  color: var(--primary-blue);
+  line-height: 1;
+  margin-bottom: -4rpx; /* 微调底部对齐 */
 }
 
 .question-tier {
-  font-size: 20rpx;
-  padding: 4rpx 12rpx;
-  border-radius: 12rpx;
-  font-weight: 500;
+  height: 40rpx;
+  padding: 0 16rpx;
+  font-size: 22rpx;
+  border-radius: 8rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4rpx; /* 配合底部对齐 */
 }
 
 .tier-basic {
@@ -110,32 +140,41 @@
 
 .question-content {
   margin-bottom: 32rpx;
+  min-height: 140rpx; /* 固定最小高度，防止抖动 (约2-3行文字高度) */
+  display: flex;
+  align-items: center; /* 文字垂直居中 */
 }
 
 .question-text {
-  font-size: 32rpx;
-  font-weight: 500;
-  line-height: 1.6;
-  color: var(--text-main);
+  font-size: 36rpx; /* 加大题目文字 */
+  font-weight: 600; /* 加粗题目文字 */
+  line-height: 1.5;
+  color: #111827; /* 更深的颜色 */
   display: block;
+  width: 100%;
 }
 
 /* 选项列表 */
 .options-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
+  gap: 24rpx;
+  background: var(--card-white);
+  padding: 32rpx;
+  border-radius: 32rpx;
+  margin-top: 0;
+  box-shadow: 0 16rpx 40rpx rgba(15, 23, 42, 0.08);
 }
 
 .option-item {
   display: flex;
   align-items: flex-start;
-  gap: 16rpx;
+  gap: 24rpx;
   padding: 24rpx;
-  background: var(--bg-gray);
   border-radius: 20rpx;
-  border: 2rpx solid transparent;
+  border: 2rpx solid var(--border-gray);
   transition: all 0.2s ease;
+  background: #F8FAFC;
 }
 
 .option-item:active {
@@ -194,20 +233,32 @@
   color: var(--primary-blue);
 }
 
-/* 底部导航 */
-.bottom-nav {
+/* 固定底部导航栏 */
+.fixed-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   gap: 16rpx;
-  margin-bottom: 24rpx;
+  padding: 16rpx 32rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: var(--card-white);
+  border-top: 1rpx solid var(--border-gray);
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.04);
+  z-index: 100;
 }
 
 .nav-btn {
   flex: 1;
 }
 
-.btn-primary.disabled {
-  opacity: 0.4;
+.btn-primary.disabled,
+.btn-primary[disabled] {
+  background: #E5E7EB !important;
+  color: #9CA3AF !important;
   box-shadow: none;
+  opacity: 1;
 }
 
 /* 提示信息 */

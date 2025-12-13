@@ -1,8 +1,8 @@
 <!--pages/welcome/welcome.wxml-->
 <!-- 根容器使用.page-container + 动态绑定安全留白，防止内容溢出到原生区域 -->
 <view class="page-container" style="padding-top: {{safeTopPadding}}rpx;">
-  <!-- 主内容区 -->
-  <view class="welcome-content">
+  <!-- 主内容区 - 可滚动 -->
+  <scroll-view class="welcome-content" scroll-y="true" enhanced="true" show-scrollbar="false">
     <!-- Hero区域 -->
     <view class="hero-section">
       <view class="hero-decoration">
@@ -93,12 +93,15 @@
       </view>
     </view>
 
-    <!-- 开始按钮 -->
-    <view class="action-area">
-      <button class="btn-primary start-btn" bindtap="startTest">
-        <text>开始评测</text>
-        <text class="btn-arrow">→</text>
-      </button>
-    </view>
+    <!-- 底部占位，防止内容被固定按钮遮挡 -->
+    <view class="bottom-placeholder"></view>
+  </scroll-view>
+
+  <!-- 固定底部按钮 -->
+  <view class="fixed-bottom-action">
+    <button class="btn-primary start-btn" bindtap="startTest">
+      <text>开始评测</text>
+      <text class="btn-arrow">→</text>
+    </button>
   </view>
 </view>

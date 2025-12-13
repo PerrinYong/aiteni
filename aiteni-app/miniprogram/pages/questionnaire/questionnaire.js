@@ -13,10 +13,14 @@ Page({
     isSubmitting: false,     // 是否正在提交
     isLoading: true,         // 是否正在加载
     selectedAnswer: '',      // 当前选中的答案
-    currentQuestionTier: ''  // 当前题目类型（basic/advanced）
+    currentQuestionTier: '', // 当前题目类型（basic/advanced）
+    safeTopPadding: 0        // 顶部安全留白
   },
 
   onLoad(options) {
+    // 初始化安全区域
+    this.initSafeArea();
+
     // 获取阶段参数
     const stage = options.stage || 'basic';
     this.setData({ stage });
@@ -27,6 +31,34 @@ Page({
     // 尝试恢复答题进度
     if (stage === 'basic') {
       this.restoreProgress();
+    }
+  },
+
+  /**
+   * 初始化安全区域适配
+   */
+  initSafeArea() {
+    try {
+      const systemInfo = wx.getSystemInfoSync();
+      const menuButton = wx.getMenuButtonBoundingClientRect();
+      
+      // 计算顶部留白：胶囊按钮底部 + 12px 间距
+      // 如果获取不到胶囊信息（极少数情况），使用状态栏 + 44px
+      let topPx = 0;
+      if (menuButton && menuButton.bottom) {
+        topPx = menuButton.bottom + 12;
+      } else {
+        topPx = (systemInfo.statusBarHeight || 20) + 44 + 12;
+      }
+
+      // 转换为rpx
+      const pixelRatio = 750 / systemInfo.windowWidth;
+      const safeTopPadding = topPx * pixelRatio;
+      
+      this.setData({ safeTopPadding });
+    } catch (e) {
+      console.error('计算安全区域失败', e);
+      this.setData({ safeTopPadding: 160 }); // 兜底值
     }
   },
 
