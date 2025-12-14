@@ -1,16 +1,19 @@
 // pages/about/about.js
+const app = getApp();
+
 Page({
   data: {
-    safeTopPadding: 20, // 页面容器顶部安全留白（rpx�?
+    safeTopPadding: 20, // 页面容器顶部安全留白（rpx）
     version: '1.0.0',
+    userInfo: null,
     features: [
       {
         title: 'NTRP专业评估',
         desc: '基于国际网球评级标准，提供科学准确的水平评估'
       },
       {
-        title: '多维度分�?,
-        desc: '�?0个维度全面分析您的网球技术水�?
+        title: '多维度分析',
+        desc: '从10个维度全面分析您的网球技术水平'
       },
       {
         title: '个性化建议',
@@ -18,7 +21,7 @@ Page({
       },
       {
         title: '历史记录',
-        desc: '保存每次评估记录，追踪您的进步历�?
+        desc: '保存每次评估记录，追踪您的进步历程'
       }
     ]
   },
@@ -42,22 +45,22 @@ Page({
       
       this.setData({ safeTopPadding });
     } catch (error) {
-      console.error('[About SafeArea] 适配失败�?, error);
+      console.error('[About SafeArea] 适配失败：', error);
       this.setData({ safeTopPadding: 120 });
     }
   },
 
   onShow() {
-    // 每次显示时刷新用户信�?
-    this.# removed
+    // 每次显示时刷新用户信息
+    this.loadUserInfo();
   },
 
   /**
    * 加载用户信息
    */
-  load# removed
-    const # removed
-    this.setData({ # removed
+  loadUserInfo() {
+    const userInfo = app.globalData.userInfo;
+    this.setData({ userInfo });
   },
 
   /**
@@ -65,15 +68,15 @@ Page({
    */
   async handleLogin() {
     try {
-      wx.showLoading({ title: '登录�?..' });
+      wx.showLoading({ title: '登录中...' });
 
       // 调用微信登录
       await app.login();
 
       // 获取用户信息
-      const # removed
+      const userInfo = app.globalData.userInfo;
       
-      this.setData({ # removed
+      this.setData({ userInfo });
       
       wx.hideLoading();
       wx.showToast({
@@ -104,13 +107,13 @@ Page({
   handleLogout() {
     wx.showModal({
       title: '提示',
-      content: '确定退出登录吗�?,
+      content: '确定退出登录吗？',
       success: (res) => {
         if (res.confirm) {
           app.logout();
-          this.setData({ # removed
+          this.setData({ userInfo: null });
           wx.showToast({
-            title: '已退出登�?,
+            title: '已退出登录',
             icon: 'success'
           });
         }

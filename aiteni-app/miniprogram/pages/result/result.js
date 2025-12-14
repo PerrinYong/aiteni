@@ -18,6 +18,7 @@ Page({
   data: {
     isLoading: true,
     safeTopPadding: 20, // 页面容器顶部安全留白（rpx）
+    showDetail: false, // 是否显示详细版
     
     // 评估结果数据
     result: null,
@@ -140,18 +141,82 @@ Page({
     const dimensionScores = rawResult.dimension_scores || {};
     const dimensionComments = rawResult.dimension_comments || {};
     
-    // 将后端返回的优势/短板数组转换为UI需要的格式
-    const advantages = (rawResult.advantages || []).map(dim => ({
-      name: DIMENSION_NAMES[dim] || dim,
-      score: (dimensionScores[dim] || overallLevel).toFixed(1),
-      description: dimensionComments[dim] || `${DIMENSION_NAMES[dim] || dim}是您的优势项目`
-    }));
+    console.log('[Result] 后端返回的advantages:', rawResult.advantages);
+    console.log('[Result] 后端返回的weaknesses:', rawResult.weaknesses);
     
-    const weaknesses = (rawResult.weaknesses || []).map(dim => ({
-      name: DIMENSION_NAMES[dim] || dim,
-      score: (dimensionScores[dim] || overallLevel).toFixed(1),
-      description: dimensionComments[dim] || `${DIMENSION_NAMES[dim] || dim}有提升空间`
-    }));
+    // 将后端返回的优势/短板数组转换为UI需要的格式
+    // 如果后端没有返回，则从dimension_scores中计算
+    let advantages = [];
+    let weaknesses = [];
+    
+    if (rawResult.advantages && rawResult.advantages.length > 0) {
+      // 使用后端返回的优势列表
+      advantages = rawResult.advantages.map(dim => ({
+        name: DIMENSION_NAMES[dim] || dim,
+        score: (dimensionScores[dim] || overallLevel).toFixed(1),
+        description: dimensionComments[dim] || this.getAdvantageDescription(dim, dimensionScores[dim] || overallLevel)
+      }));
+    } else {
+      // 从维度分数中计算优势（降低阈值到0.2）
+      const entries = Object.entries(dimensionScores);
+      advantages = entries
+        .filter(([key, value]) => value >= overallLevel + 0.2)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([key, value]) => ({
+          name: DIMENSION_NAMES[key] || key,
+          score: value.toFixed(1),
+          description: dimensionComments[key] || this.getAdvantageDescription(key, value)
+        }));
+      
+      // 如果仍然没有优势，则选择分数最高的3个维度
+      if (advantages.length === 0) {
+        advantages = entries
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([key, value]) => ({
+            name: DIMENSION_NAMES[key] || key,
+            score: value.toFixed(1),
+            description: dimensionComments[key] || this.getAdvantageDescription(key, value)
+          }));
+      }
+    }
+    
+    if (rawResult.weaknesses && rawResult.weaknesses.length > 0) {
+      // 使用后端返回的短板列表
+      weaknesses = rawResult.weaknesses.map(dim => ({
+        name: DIMENSION_NAMES[dim] || dim,
+        score: (dimensionScores[dim] || overallLevel).toFixed(1),
+        description: dimensionComments[dim] || this.getWeaknessDescription(dim, dimensionScores[dim] || overallLevel)
+      }));
+    } else {
+      // 从维度分数中计算短板（降低阈值到0.2）
+      const entries = Object.entries(dimensionScores);
+      weaknesses = entries
+        .filter(([key, value]) => value < overallLevel - 0.2)
+        .sort((a, b) => a[1] - b[1])
+        .slice(0, 3)
+        .map(([key, value]) => ({
+          name: DIMENSION_NAMES[key] || key,
+          score: value.toFixed(1),
+          description: dimensionComments[key] || this.getWeaknessDescription(key, value)
+        }));
+      
+      // 如果仍然没有短板，则选择分数最低的3个维度
+      if (weaknesses.length === 0) {
+        weaknesses = entries
+          .sort((a, b) => a[1] - b[1])
+          .slice(0, 3)
+          .map(([key, value]) => ({
+            name: DIMENSION_NAMES[key] || key,
+            score: value.toFixed(1),
+            description: dimensionComments[key] || this.getWeaknessDescription(key, value)
+          }));
+      }
+    }
+    
+    console.log('[Result] 处理后的advantages:', advantages);
+    console.log('[Result] 处理后的weaknesses:', weaknesses);
     
     // 直接使用后端返回的数据
     const result = {
@@ -300,6 +365,15 @@ Page({
     }
     
     return details[dimension] || `${DIMENSION_NAMES[dimension]}的详细分析和建议。`
+  },
+
+  /**
+   * 切换显示详细版/简略版
+   */
+  toggleDetail() {
+    this.setData({
+      showDetail: !this.data.showDetail
+    });
   },
 
   /**

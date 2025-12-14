@@ -51,7 +51,7 @@
       <view class="section-divider-line"></view>
     </view>
 
-    <!-- 优势卡片 -->
+    <!-- 优势卡片（简略版） -->
     <view class="card card-soft">
       <view class="card-header">
         <view class="card-header-title">
@@ -61,7 +61,30 @@
         <view class="status-dot status-dot-green"></view>
       </view>
       
-      <view class="list">
+      <!-- 简略版：只显示维度名称 -->
+      <view wx:if="{{!showDetail}}" class="list">
+        <view
+          wx:for="{{result.advantages}}"
+          wx:key="name"
+          class="list-item {{index > 0 ? 'has-border' : ''}}"
+        >
+          <view class="list-icon list-icon-adv">🎾</view>
+          <view class="list-body">
+            <view class="list-text-main">
+              <text>{{item.name}}</text>
+              <text class="chip chip-blue">{{item.score}} 级</text>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 空状态提示 -->
+        <view wx:if="{{result.advantages.length === 0}}" class="empty-hint">
+          <text class="empty-hint-text">各维度发展较为均衡</text>
+        </view>
+      </view>
+      
+      <!-- 详细版：显示完整描述 -->
+      <view wx:else class="list">
         <view
           wx:for="{{result.advantages}}"
           wx:key="name"
@@ -76,6 +99,11 @@
             <text class="list-text-sub">{{item.description}}</text>
           </view>
         </view>
+        
+        <!-- 空状态提示 -->
+        <view wx:if="{{result.advantages.length === 0}}" class="empty-hint">
+          <text class="empty-hint-text">各维度发展较为均衡，没有特别突出的优势</text>
+        </view>
       </view>
     </view>
 
@@ -89,7 +117,30 @@
         <view class="status-dot status-dot-orange"></view>
       </view>
       
-      <view class="list">
+      <!-- 简略版：只显示维度名称 -->
+      <view wx:if="{{!showDetail}}" class="list">
+        <view
+          wx:for="{{result.weaknesses}}"
+          wx:key="name"
+          class="list-item {{index > 0 ? 'has-border' : ''}}"
+        >
+          <view class="list-icon list-icon-weak">🎯</view>
+          <view class="list-body">
+            <view class="list-text-main">
+              <text>{{item.name}}</text>
+              <text class="chip chip-orange">{{item.score}} 级</text>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 空状态提示 -->
+        <view wx:if="{{result.weaknesses.length === 0}}" class="empty-hint">
+          <text class="empty-hint-text">各维度发展较为均衡</text>
+        </view>
+      </view>
+      
+      <!-- 详细版：显示完整描述 -->
+      <view wx:else class="list">
         <view
           wx:for="{{result.weaknesses}}"
           wx:key="name"
@@ -104,15 +155,27 @@
             <text class="list-text-sub">{{item.description}}</text>
           </view>
         </view>
+        
+        <!-- 空状态提示 -->
+        <view wx:if="{{result.weaknesses.length === 0}}" class="empty-hint">
+          <text class="empty-hint-text">各维度发展较为均衡，建议全面提升</text>
+        </view>
       </view>
       
-      <view class="hint-text">
+      <view wx:if="{{showDetail && result.weaknesses.length > 0}}" class="hint-text">
         如果你只想抓重点练习，建议先在以上 2–3 个环节上持续投入时间，效果会最明显。
+      </view>
+      
+      <!-- 查看详情按钮 -->
+      <view wx:if="{{!showDetail}}" class="card-action">
+        <button class="btn-text" bindtap="toggleDetail">
+          查看完整评语 →
+        </button>
       </view>
     </view>
 
-    <!-- 各维度详细评估 -->
-    <view class="card card-soft">
+    <!-- 各维度详细评估（仅在详细版显示） -->
+    <view wx:if="{{showDetail}}" class="card card-soft">
       <view class="card-header">
         <view class="card-header-title">
           <text class="emoji-icon">📝</text>
@@ -150,12 +213,16 @@
         <text class="action-text">
           想把这些评估转化为具体训练内容？可以根据结果自动生成一份你的专属练习清单。
         </text>
-        <button class="btn-primary" bindtap="getTrainingPlan">
+        <!-- 暂时隐藏训练建议功能 -->
+        <!-- <button class="btn-primary" bindtap="getTrainingPlan">
           查看训练建议
-        </button>
+        </button> -->
         <button class="btn-text" bindtap="shareResult">
           分享结果给教练
           <text class="btn-text-icon">⤴</text>
+        </button>
+        <button class="btn-text" bindtap="toggleDetail">
+          收起详细评语 ↑
         </button>
       </view>
     </view>

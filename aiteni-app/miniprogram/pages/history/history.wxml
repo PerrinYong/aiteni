@@ -23,8 +23,8 @@
       >
         <view class="history-header">
           <view class="history-level">
-            <text class="level-badge">{{item.overallLevel}}</text>
-            <text class="level-label">{{item.levelLabel}}</text>
+            <text class="level-badge">{{item.rounded_level}}</text>
+            <text class="level-label">{{item.level_label}}</text>
           </view>
           <text class="history-date">{{item.dateText}}</text>
         </view>
