@@ -475,27 +475,11 @@ Page({
    */
   async navigateToResult(result) {
     console.log('[问卷页] 跳转到结果页');
+    console.log('[问卷页] 后端返回的结果:', result);
     
-    // 获取完整答案
-    const answers = this.data.stage === 'basic' 
-      ? this.data.answers 
-      : {
-          ...(this.data.basicAnswers || wx.getStorageSync('basic_answers') || {}),
-          ...this.data.answers
-        };
-    
-    // 保存到后端
-    try {
-      console.log('[问卷页] 保存评估记录到后端');
-      const saveResult = await api.saveEvaluation(answers, result);
-      console.log('[问卷页] 保存成功:', saveResult);
-      
-      // 将record_id附加到result中
-      result.record_id = saveResult.record_id;
-    } catch (error) {
-      console.error('[问卷页] 保存到后端失败:', error);
-      // 即使保存失败也继续显示结果
-    }
+    // 后端已经自动保存，直接使用返回的结果
+    // result.saved_to_cloud: 是否已保存到云端
+    // result.record_id: 如果已保存，包含记录ID
     
     // 缓存结果（供result页面使用）
     wx.setStorageSync('latest_result', result);

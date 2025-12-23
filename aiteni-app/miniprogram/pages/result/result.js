@@ -91,10 +91,13 @@ Page({
       const latestResult = wx.getStorageSync('latest_result')
       if (latestResult) {
         const processedResult = this.processResult(latestResult)
+        const recordId = latestResult.record_id || null;
+        
         this.setData({
           result: processedResult,
-          isLoading: false
-        })
+          isLoading: false,
+          resultId: recordId
+        });
       } else {
         wx.showToast({
           title: '没有找到评估结果',
