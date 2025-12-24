@@ -58,7 +58,7 @@
             <view wx:else class="radio-unchecked"></view>
           </view>
           <view class="option-content">
-            <text class="option-text">{{item.text}}</text>
+            <rich-text class="option-text" nodes="{{item.htmlText}}"></rich-text>
           </view>
         </view>
       </view>

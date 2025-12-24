@@ -1,5 +1,7 @@
 // pages/questionnaire/questionnaire.js - 两阶段评估实现
 const api = require('../../utils/api');
+const { renderOptionsText } = require('../../utils/markdown');
+const { debug, groupStart, groupEnd, json, table } = require('../../utils/debug');
 
 Page({
   data: {
@@ -66,24 +68,89 @@ Page({
    * 加载题目配置
    */
   async loadQuestions() {
-    console.log('[问卷页] 开始加载题目，当前阶段:', this.data.stage);
+    groupStart('questionnaire', '开始加载题目');
+    debug('questionnaire', '当前阶段:', this.data.stage);
     
     try {
       wx.showLoading({ title: '加载题目中...' });
       
-      // 从缓存获取题目配置
+      // 从缓存获取题目配置和版本号
       let questionsConfig = wx.getStorageSync('questions_config');
-      console.log('[问卷页] 缓存中的题目配置:', questionsConfig ? '存在' : '不存在');
+      let cachedVersion = wx.getStorageSync('questions_version');
       
-      if (!questionsConfig) {
-        console.log('[问卷页] 从服务器获取题目配置...');
-        // 缓存中没有，从服务器获取
+      debug('questionnaire', '缓存中的题目配置:', questionsConfig ? '存在' : '不存在');
+      debug('questionnaire', '缓存中的版本号:', cachedVersion || '无');
+      
+      // 兼容旧缓存：如果缓存中没有版本号字段，说明是旧版本缓存，需要更新
+      if (questionsConfig && !questionsConfig.version && !cachedVersion) {
+        debug('questionnaire', '检测到旧版本缓存（无版本号），将强制更新');
+        questionsConfig = null;  // 清除旧缓存
+        wx.removeStorageSync('questions_config');
+      }
+      
+      // 从服务器获取最新版本号（每次都检查）
+      debug('questionnaire', '检查服务器版本号...');
+      let serverVersion = '1.0.0';  // 默认版本号
+      
+      try {
+        const versionInfo = await api.getVersion();
+        serverVersion = versionInfo.questions_version || '1.0.0';
+        debug('questionnaire', '服务器版本号:', serverVersion);
+      } catch (versionError) {
+        console.warn('[问卷页] 获取版本号失败，使用默认版本:', versionError);
+        debug('questionnaire', '版本号获取失败，将强制从服务器获取配置');
+        // 版本号获取失败，强制更新配置
+        questionsConfig = null;
+      }
+      
+      debug('questionnaire', '缓存版本号:', cachedVersion);
+      
+      // 判断是否需要更新
+      const needUpdate = !questionsConfig || !cachedVersion || cachedVersion !== serverVersion;
+      debug('questionnaire', '是否需要更新:', needUpdate);
+      
+      if (needUpdate) {
+        debug('questionnaire', '版本不一致或无缓存，从服务器获取最新配置...');
+        
+        // 从服务器获取最新配置
         const config = await api.questionnaire.getConfig();
-        console.log('[问卷页] 服务器返回的配置:', config);
+        
+        // 详细打印服务器返回的数据
+        json('questionnaire', '服务器返回的完整配置', config);
+        debug('questionnaire', '配置数据类型:', typeof config);
+        debug('questionnaire', '配置版本号:', config.version);
+        debug('questionnaire', '基础题数量:', config.basic_questions?.length || 0);
+        debug('questionnaire', '进阶题数量:', config.advanced_questions?.length || 0);
+        
+        // 打印第一道题的完整结构（用于检查数据格式）
+        if (config.basic_questions && config.basic_questions.length > 0) {
+          const firstQuestion = config.basic_questions[0];
+          json('questionnaire', '第一道基础题完整数据', firstQuestion);
+          
+          // 特别检查选项文本
+          if (firstQuestion.options && firstQuestion.options.length > 0) {
+            debug('questionnaire', '第一个选项原始文本:', firstQuestion.options[0].text);
+            debug('questionnaire', '是否包含**标记:', firstQuestion.options[0].text.includes('**'));
+            
+            // 打印所有选项的文本预览
+            firstQuestion.options.forEach((opt, idx) => {
+              const preview = opt.text.substring(0, 60) + (opt.text.length > 60 ? '...' : '');
+              debug('questionnaire', `  选项${idx + 1} [${opt.id}]:`, preview);
+            });
+          }
+        }
+        
         questionsConfig = config;
-        // 缓存到本地
+        
+        // 获取版本号（优先使用配置中的版本号，其次使用服务器版本号）
+        const versionToCache = config.version || serverVersion || '1.0.0';
+        
+        // 缓存配置和版本号
         wx.setStorageSync('questions_config', questionsConfig);
-        console.log('[问卷页] 题目配置已缓存');
+        wx.setStorageSync('questions_version', versionToCache);
+        debug('questionnaire', '题目配置已缓存，版本号:', versionToCache);
+      } else {
+        debug('questionnaire', '使用缓存的题目配置（版本号一致）');
       }
       
       // 检查配置是否有效
@@ -95,18 +162,22 @@ Page({
       let filteredQuestions;
       if (this.data.stage === 'basic') {
         filteredQuestions = questionsConfig.basic_questions || [];
-        console.log('[问卷页] 基础题数量:', filteredQuestions.length);
+        debug('questionnaire', '基础题数量:', filteredQuestions.length);
       } else {
         filteredQuestions = questionsConfig.advanced_questions || [];
-        console.log('[问卷页] 进阶题数量:', filteredQuestions.length);
+        debug('questionnaire', '进阶题数量:', filteredQuestions.length);
       }
       
-      // 打印题目详情（仅第一题）
+      // 打印题目详情（前3题）
       if (filteredQuestions.length > 0) {
-        console.log('[问卷页] 第一题示例:', {
-          id: filteredQuestions[0].id,
-          text: filteredQuestions[0].text?.substring(0, 30) + '...',
-          optionCount: filteredQuestions[0].options?.length
+        debug('questionnaire', '题目详情（前3题）:');
+        filteredQuestions.slice(0, 3).forEach((q, idx) => {
+          debug('questionnaire', `题目${idx + 1}:`, {
+            id: q.id,
+            text: q.text?.substring(0, 40) + '...',
+            optionCount: q.options?.length,
+            hasOptions: !!q.options
+          });
         });
       }
       
@@ -200,12 +271,34 @@ Page({
     const { optionId } = e.currentTarget.dataset;
     const { currentQuestion, currentIndex } = this.data;
     
-    console.log('[问卷页] 选择答案:', optionId);
+    groupStart('questionnaire', '用户选择答案');
+    debug('questionnaire', '选择的选项ID:', optionId);
+    debug('questionnaire', '当前题目ID:', currentQuestion.id);
     
     this.setData({
       selectedAnswer: optionId,
       [`answers.${currentQuestion.id}`]: optionId
     });
+    
+    debug('questionnaire', '开始重新渲染选项（更新选中状态）');
+    
+    // 重新渲染选项（更新选中状态的高亮样式）
+    const processedOptions = renderOptionsText(currentQuestion.options, optionId);
+    
+    debug('questionnaire', '即将更新到setData的选项（前2个）:');
+    processedOptions.slice(0, 2).forEach((opt, idx) => {
+      debug('questionnaire', `  选项${idx + 1} [${opt.id}]:`, {
+        isSelected: opt.id === optionId,
+        htmlTextLength: opt.htmlText?.length || 0
+      });
+    });
+    
+    this.setData({
+      'currentQuestion.options': processedOptions
+    });
+    
+    debug('questionnaire', 'setData完成 ✓');
+    groupEnd('questionnaire');
     
     // 更新进度
     this.updateProgress();
@@ -225,14 +318,49 @@ Page({
       const selectedAnswer = answers[currentQuestion.id] || '';
       const currentQuestionTier = currentQuestion.question_tier || 'basic';
       
-      console.log('[问卷页] 切换到题目:', currentIndex + 1, '/', questions.length, '类型:', currentQuestionTier);
+      groupStart('questionnaire', `切换到题目 ${currentIndex + 1}/${questions.length}`);
+      debug('questionnaire', '题目ID:', currentQuestion.id);
+      debug('questionnaire', '题目文本:', currentQuestion.text || currentQuestion.question_text);
+      debug('questionnaire', '题目类型:', currentQuestionTier);
+      debug('questionnaire', '已选答案:', selectedAnswer);
+      debug('questionnaire', '选项数量:', currentQuestion.options?.length || 0);
+      
+      // 打印原始选项数据（前2个）
+      if (currentQuestion.options && currentQuestion.options.length > 0) {
+        debug('questionnaire', '原始选项数据（前2个）:');
+        currentQuestion.options.slice(0, 2).forEach((opt, idx) => {
+          const textPreview = opt.text.substring(0, 60) + (opt.text.length > 60 ? '...' : '');
+          debug('questionnaire', `  选项${idx + 1} [${opt.id}]:`, textPreview);
+          debug('questionnaire', `    包含**:`, opt.text.includes('**'));
+        });
+      }
+      
+      // 处理选项文本的Markdown渲染（将 **text** 转为 HTML，并根据选中状态应用样式）
+      const processedOptions = renderOptionsText(currentQuestion.options, selectedAnswer);
+      const processedQuestion = {
+        ...currentQuestion,
+        options: processedOptions
+      };
+      
+      debug('questionnaire', '处理后的选项（包含htmlText，前2个）:');
+      processedOptions.slice(0, 2).forEach((opt, idx) => {
+        debug('questionnaire', `  选项${idx + 1}:`, {
+          id: opt.id,
+          hasHtmlText: !!opt.htmlText,
+          htmlTextLength: opt.htmlText?.length || 0
+        });
+        const htmlPreview = opt.htmlText.substring(0, 100) + (opt.htmlText.length > 100 ? '...' : '');
+        debug('questionnaire', `    htmlText:`, htmlPreview);
+      });
       
       this.setData({
-        currentQuestion,
+        currentQuestion: processedQuestion,
         selectedAnswer,
         currentQuestionTier,
         isLastQuestion: currentIndex === questions.length - 1
       });
+      
+      groupEnd('questionnaire');
     }
   },
 

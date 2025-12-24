@@ -102,6 +102,17 @@ function request(options) {
 }
 
 /**
+ * 获取系统版本信息
+ */
+function getVersion() {
+  return request({
+    url: '/version',
+    method: 'GET',
+    needAuth: false
+  })
+}
+
+/**
  * 用户认证相关API
  */
 const authAPI = {
@@ -265,6 +276,9 @@ const trainingAPI = {
 
 // 导出所有API
 module.exports = {
+  // 系统相关
+  getVersion,
+  
   // 认证相关
   wechatLogin: authAPI.wxLogin,
   verifyToken: authAPI.verifyToken,
