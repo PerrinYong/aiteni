@@ -519,14 +519,128 @@
   padding: 16rpx 0;
 }
 
-/* 空状态提示 */
-.empty-hint {
-  padding: 40rpx 24rpx;
-  text-align: center;
+/* 分享预览弹窗 */
+.share-preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
-.empty-hint-text {
-  font-size: 28rpx;
-  color: var(--text-placeholder);
-  line-height: 1.5;
+.preview-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.preview-container {
+  position: relative;
+  width: 100%;
+  background: #F5F5F5;
+  border-top-left-radius: 32rpx;
+  border-top-right-radius: 32rpx;
+  padding: 32rpx 32rpx calc(32rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.preview-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.preview-close {
+  padding: 12rpx;
+  font-size: 32rpx;
+  color: #999;
+}
+
+.preview-image-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 48rpx;
+}
+
+.share-image {
+  width: 620rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 16rpx 40rpx rgba(0, 0, 0, 0.15);
+}
+
+.share-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 24rpx;
+}
+
+.share-action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.btn-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
+}
+
+.btn-reset::after {
+  border: none;
+}
+
+.action-icon-circle {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.icon-wechat {
+  color: #07C160;
+}
+
+.icon-timeline {
+  color: #333;
+}
+
+.icon-save {
+  color: #FFD84A;
+}
+
+.action-label {
+  font-size: 24rpx;
+  color: #666;
 }

@@ -22,7 +22,12 @@ Page({
     
     // 评估结果数据
     result: null,
-    resultId: null
+    resultId: null,
+    
+    // 分享相关
+    showSharePreview: false,
+    shareImage: '',
+    isGeneratingImage: false
   },
 
   onLoad(options) {
@@ -411,131 +416,388 @@ Page({
    * 生成分享图片
    */
   onShareImage() {
+    if (this.data.shareImage) {
+      this.setData({ showSharePreview: true });
+      return;
+    }
+
+    this.setData({ isGeneratingImage: true });
     wx.showLoading({
       title: '生成海报中...',
-    })
+    });
 
-    const query = wx.createSelectorQuery()
+    const query = wx.createSelectorQuery();
     query.select('#shareCanvas')
       .fields({ node: true, size: true })
       .exec((res) => {
         if (!res || !res[0]) {
-            wx.hideLoading()
-            wx.showToast({ title: 'Canvas初始化失败', icon: 'none' })
-            return
+            wx.hideLoading();
+            this.setData({ isGeneratingImage: false });
+            wx.showToast({ title: 'Canvas初始化失败', icon: 'none' });
+            return;
         }
         
-        const canvas = res[0].node
-        const ctx = canvas.getContext('2d')
-        const dpr = wx.getSystemInfoSync().pixelRatio
+        const canvas = res[0].node;
+        const ctx = canvas.getContext('2d');
+        const dpr = wx.getSystemInfoSync().pixelRatio;
         
         // 设置画布尺寸
-        canvas.width = res[0].width * dpr
-        canvas.height = res[0].height * dpr
-        ctx.scale(dpr, dpr)
+        canvas.width = res[0].width * dpr;
+        canvas.height = res[0].height * dpr;
+        ctx.scale(dpr, dpr);
         
         // 绘制内容
-        this.drawShareContent(ctx, canvas, res[0].width, res[0].height)
-      })
+        this.drawShareContent(ctx, canvas, res[0].width, res[0].height);
+      });
   },
 
   /**
    * 绘制海报内容
    */
   drawShareContent(ctx, canvas, width, height) {
-    const { result } = this.data
-    
-    // 1. 绘制背景 (使用品牌蓝渐变)
-    const gradient = ctx.createLinearGradient(0, 0, 0, height)
-    gradient.addColorStop(0, '#1D7CF2')
-    gradient.addColorStop(1, '#2A8CFF')
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, width, height)
-    
-    // 2. 绘制装饰球 (右上角)
-    ctx.beginPath()
-    ctx.arc(width - 20, 40, 120, 0, 2 * Math.PI)
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
-    ctx.fill()
+    const { result } = this.data;
+    if (!result) return;
 
-    // 3. 绘制标题
-    ctx.fillStyle = '#FFFFFF'
-    ctx.font = 'bold 20px sans-serif'
-    ctx.textAlign = 'left'
-    ctx.textBaseline = 'top'
-    ctx.fillText('我的网球水平等级', 32, 48)
-    
-    // 4. 绘制 NTRP 分数 (大号)
-    ctx.font = 'bold 80px sans-serif'
-    ctx.fillText(result.overallLevel.toString(), 32, 88)
-    
-    // NTRP 标签
-    ctx.font = 'bold 24px sans-serif'
-    const levelWidth = ctx.measureText(result.overallLevel.toString()).width
-    ctx.fillText('NTRP', 32 + levelWidth + 12, 134)
-    
-    // 5. 绘制等级描述
-    ctx.font = '16px sans-serif'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
-    ctx.fillText(result.levelLabel, 32, 190)
-    
-    // 6. 绘制白色卡片区域 (用于展示优势)
-    const cardY = 250
-    const cardHeight = height - cardY - 120 // 留出底部空间
-    
-    // 圆角矩形
-    this.roundRect(ctx, 24, cardY, width - 48, cardHeight, 16)
-    ctx.fillStyle = '#FFFFFF'
-    ctx.fill()
-    
-    // 7. 绘制优势内容
-    ctx.fillStyle = '#1F2933'
-    ctx.font = 'bold 18px sans-serif'
-    ctx.fillText('主要优势', 48, cardY + 32)
-    
-    let currentY = cardY + 80
-    
-    if (result.advantages.length > 0) {
-      result.advantages.slice(0, 3).forEach((adv) => {
-        // 维度名称
-        ctx.fillStyle = '#1F2933'
-        ctx.font = 'bold 16px sans-serif'
-        ctx.fillText(adv.name, 48, currentY)
-        
-        // 分数胶囊
-        const scoreText = `${adv.score} 级`
-        ctx.font = '12px sans-serif'
-        const scoreWidth = ctx.measureText(scoreText).width + 20
-        const nameWidth = ctx.measureText(adv.name).width
-        
-        // 胶囊背景
-        ctx.fillStyle = 'rgba(29, 124, 242, 0.1)'
-        this.roundRect(ctx, 48 + nameWidth + 12, currentY + 2, scoreWidth, 20, 10)
-        ctx.fill()
-        
-        // 胶囊文字
-        ctx.fillStyle = '#1D7CF2'
-        ctx.fillText(scoreText, 48 + nameWidth + 22, currentY + 6)
-        
-        currentY += 40
-      })
-    } else {
-      ctx.fillStyle = '#6B7280'
-      ctx.font = '14px sans-serif'
-      ctx.fillText('各维度发展较为均衡', 48, currentY)
+    // 清空
+    ctx.clearRect(0, 0, width, height);
+
+    // === 目标：尽可能复刻 result 简略版的视觉 ===
+    // 设计基准（canvas 使用 px）
+    const P = 16; // 外边距
+    const gap = 14;
+    const cardW = width - P * 2;
+
+    // 背景（对应页面灰底）
+    ctx.fillStyle = '#F5F7FA';
+    ctx.fillRect(0, 0, width, height);
+
+    let y = P;
+
+    // Hero 卡
+    const heroH = 190;
+    this.drawPosterHero(ctx, P, y, cardW, heroH, result);
+    y += heroH + gap;
+
+    // 优势卡（简略）
+    y = this.drawPosterListCard(ctx, P, y, cardW, {
+      icon: '💪',
+      title: '你的主要优势',
+      dotColor: '#1FA27A',
+      rows: (result.advantages || []).slice(0, 3),
+      rowIcon: '🎾',
+      rowIconBg: 'rgba(31, 162, 122, 0.15)',
+      rowIconColor: '#1FA27A',
+      chipBg: 'rgba(29, 124, 242, 0.10)',
+      chipColor: '#1D7CF2'
+    });
+    y += gap;
+
+    // 短板卡（简略）
+    y = this.drawPosterListCard(ctx, P, y, cardW, {
+      icon: '🎯',
+      title: '当前最值得优先提升的环节',
+      dotColor: '#F97316',
+      rows: (result.weaknesses || []).slice(0, 3),
+      rowIcon: '🎯',
+      rowIconBg: 'rgba(249, 115, 22, 0.12)',
+      rowIconColor: '#F97316',
+      chipBg: 'rgba(249, 115, 22, 0.12)',
+      chipColor: '#F97316'
+    });
+
+    // 底部说明（对应页面“仅供训练参考”语气）
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = 'rgba(107, 114, 128, 0.9)';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('AiTeni 智能网球评测 · 数据仅供训练参考', width / 2, height - 12);
+
+    // 导出图片
+    wx.canvasToTempFilePath({
+      canvas: canvas,
+      success: (res) => {
+        wx.hideLoading();
+        this.setData({
+          shareImage: res.tempFilePath,
+          showSharePreview: true,
+          isGeneratingImage: false
+        });
+      },
+      fail: (err) => {
+        wx.hideLoading();
+        this.setData({ isGeneratingImage: false });
+        console.error('生成图片失败', err);
+        wx.showToast({ title: '生成失败', icon: 'none' });
+      }
+    });
+  },
+
+  /**
+   * 海报：Hero 卡（尽量贴近 result 简略版 hero）
+   */
+  drawPosterHero(ctx, x, y, w, h, result) {
+    // 渐变背景
+    const g = ctx.createLinearGradient(x, y, x + w, y + h);
+    g.addColorStop(0, '#4DA4FF');
+    g.addColorStop(0.45, '#1D7CF2');
+    g.addColorStop(1, '#2A8CFF');
+
+    // 阴影
+    ctx.save();
+    ctx.shadowColor = 'rgba(15, 23, 42, 0.16)';
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 10;
+    this.fillRoundRect(ctx, x, y, w, h, 18, g);
+    ctx.restore();
+
+    // 装饰球阴影
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    const ballG = ctx.createRadialGradient(x + w - 60, y + 40, 10, x + w - 60, y + 40, 120);
+    ballG.addColorStop(0, '#FFEFA3');
+    ballG.addColorStop(0.55, '#FFD84A');
+    ballG.addColorStop(1, '#F4C938');
+    ctx.fillStyle = ballG;
+    ctx.beginPath();
+    ctx.arc(x + w - 40, y + 30, 110, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 左侧文案
+    const leftX = x + 18;
+    const topY = y + 18;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 28px sans-serif';
+    ctx.fillText(`NTRP ${result.overallLevel}`, leftX, topY);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = '14px sans-serif';
+    ctx.fillText(result.levelLabel || '', leftX, topY + 36);
+
+    // 优势标签 chips（最多 3）
+    const chips = (result.advantageTags || []).slice(0, 3);
+    let chipX = leftX;
+    const chipY = topY + 64;
+    chips.forEach((t) => {
+      const text = String(t || '');
+      ctx.font = '12px sans-serif';
+      const tw = ctx.measureText(text).width;
+      const cw = tw + 18;
+      this.fillRoundRect(ctx, chipX, chipY, cw, 22, 11, 'rgba(255, 255, 255, 0.18)');
+      ctx.fillStyle = '#EFF6FF';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, chipX + 9, chipY + 11);
+      chipX += cw + 8;
+    });
+
+    // 注释
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('数据基于你的问卷作答，仅供训练参考。', leftX, topY + 96);
+
+    // 右侧等级徽章
+    const badgeSize = 86;
+    const bx = x + w - badgeSize - 18;
+    const by = y + 24;
+    ctx.save();
+    ctx.shadowColor = 'rgba(180, 137, 0, 0.35)';
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetY = 8;
+    this.fillRoundRect(ctx, bx, by, badgeSize, badgeSize, badgeSize / 2, '#FFD84A');
+    ctx.restore();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#1F2933';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText(String(result.overallLevel), bx + badgeSize / 2, by + badgeSize / 2 - 6);
+    ctx.font = 'bold 10px sans-serif';
+    ctx.fillText('NTRP', bx + badgeSize / 2, by + badgeSize / 2 + 16);
+  },
+
+  /**
+   * 海报：列表卡片（尽量贴近简略版“优势/短板”卡）
+   */
+  drawPosterListCard(ctx, x, y, w, config) {
+    const headerH = 54;
+    const rowH = 52;
+    const rows = (config.rows || []);
+    const listCount = Math.max(rows.length, 1);
+    const h = headerH + listCount * rowH + 16;
+
+    // 卡片背景 + 阴影
+    ctx.save();
+    ctx.shadowColor = 'rgba(15, 23, 42, 0.08)';
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 10;
+    this.fillRoundRect(ctx, x, y, w, h, 18, '#FFFFFF');
+    ctx.restore();
+
+    // header
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillStyle = '#1F2933';
+    ctx.fillText(`${config.icon}  ${config.title}`, x + 16, y + 28);
+
+    // status dot
+    ctx.fillStyle = config.dotColor;
+    ctx.beginPath();
+    ctx.arc(x + w - 18, y + 28, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // rows
+    let cy = y + headerH;
+    if (rows.length === 0) {
+      ctx.fillStyle = '#6B7280';
+      ctx.font = '13px sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('各维度发展较为均衡', x + 16, cy + rowH / 2);
+      return y + h;
     }
-    
-    // 8. 底部 Logo / 标语
-    ctx.fillStyle = '#FFFFFF'
-    ctx.font = '14px sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText('AiTeni 智能网球评测', width / 2, height - 60)
-    ctx.font = '12px sans-serif'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
-    ctx.fillText('扫码即刻测试', width / 2, height - 35)
 
-    // 9. 保存图片
-    this.saveCanvasToImage(canvas)
+    rows.forEach((item, idx) => {
+      // divider
+      if (idx > 0) {
+        ctx.fillStyle = '#E5E7EB';
+        ctx.fillRect(x + 16, cy, w - 32, 1);
+      }
+
+      const rowTop = cy + 1;
+      const iconSize = 28;
+      const iconX = x + 16;
+      const iconY = rowTop + (rowH - iconSize) / 2;
+      this.fillRoundRect(ctx, iconX, iconY, iconSize, iconSize, iconSize / 2, config.rowIconBg);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = config.rowIconColor;
+      ctx.font = '16px sans-serif';
+      ctx.fillText(config.rowIcon, iconX + iconSize / 2, iconY + iconSize / 2);
+
+      // name
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#1F2933';
+      ctx.font = '14px sans-serif';
+      const name = this.truncateText(ctx, String(item.name || ''), w - 32 - iconSize - 90);
+      const nameX = iconX + iconSize + 12;
+      const nameY = rowTop + rowH / 2;
+      ctx.fillText(name, nameX, nameY);
+
+      // chip score
+      const score = `${item.score} 级`;
+      ctx.font = '12px sans-serif';
+      const sw = ctx.measureText(score).width + 16;
+      const sh = 20;
+      const sx = x + w - 16 - sw;
+      const sy = rowTop + (rowH - sh) / 2;
+      this.fillRoundRect(ctx, sx, sy, sw, sh, 10, config.chipBg);
+      ctx.fillStyle = config.chipColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(score, sx + sw / 2, sy + sh / 2);
+
+      cy += rowH;
+    });
+
+    return y + h;
+  },
+
+  /**
+   * 省略号截断
+   */
+  truncateText(ctx, text, maxWidth) {
+    if (ctx.measureText(text).width <= maxWidth) return text;
+    let t = text;
+    while (t.length > 0 && ctx.measureText(`${t}…`).width > maxWidth) {
+      t = t.slice(0, -1);
+    }
+    return `${t}…`;
+  },
+
+  /**
+   * 填充圆角矩形
+   */
+  fillRoundRect(ctx, x, y, w, h, r, fillStyle) {
+    ctx.save();
+    ctx.fillStyle = fillStyle;
+    this.roundRect(ctx, x, y, w, h, r);
+    ctx.fill();
+    ctx.restore();
+  },
+
+  /**
+   * 关闭分享预览
+   */
+  closeSharePreview() {
+    this.setData({ showSharePreview: false });
+  },
+
+  /**
+   * 保存图片到相册
+   */
+  saveImageToPhotos() {
+    if (!this.data.shareImage) return;
+    
+    wx.saveImageToPhotosAlbum({
+      filePath: this.data.shareImage,
+      success: () => {
+        wx.showToast({
+          title: '已保存到相册',
+          icon: 'success'
+        });
+      },
+      fail: (err) => {
+        console.error('保存图片失败', err);
+        if (err.errMsg.includes('auth')) {
+          wx.showModal({
+            title: '提示',
+            content: '需要保存到相册权限，请在设置中开启',
+            success: (res) => {
+              if (res.confirm) {
+                wx.openSetting();
+              }
+            }
+          });
+        } else {
+          wx.showToast({ title: '保存失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
+  /**
+   * 调用微信原生分享（分享给朋友）
+   */
+  shareToFriend() {
+    // 提示用户使用原生分享功能（部分场景下无法直接拉起，需引导）
+    // 或者利用 button open-type="share"，这里我们已经在WXML中使用了 open-type="share" 的按钮
+    // 如果是自定义逻辑，可以使用 wx.showShareMenu
+  },
+
+  /**
+   * 朋友圈分享提示
+   */
+  shareToTimeline() {
+    // 小程序无法直接“发图片到朋友圈”，最符合微信习惯的是：预览图片 -> 微信里分享 / 或保存后去朋友圈选择图片
+    if (!this.data.shareImage) return;
+    wx.previewImage({
+      urls: [this.data.shareImage],
+      current: this.data.shareImage
+    });
+  },
+
+  /**
+   * 预览分享图片（利用微信原生预览页：可转发/保存/朋友圈）
+   */
+  previewShareImage() {
+    if (!this.data.shareImage) return;
+    wx.previewImage({
+      urls: [this.data.shareImage],
+      current: this.data.shareImage
+    });
   },
 
   /**
@@ -554,53 +816,10 @@ Page({
   },
 
   /**
-   * 保存 Canvas 为图片
+   * 保存 Canvas 为图片 (已集成在生成逻辑中，此方法废弃或改为仅保存到相册)
    */
   saveCanvasToImage(canvas) {
-    wx.canvasToTempFilePath({
-      canvas: canvas,
-      success: (res) => {
-        wx.saveImageToPhotosAlbum({
-          filePath: res.tempFilePath,
-          success: () => {
-            wx.hideLoading()
-            wx.showToast({
-              title: '已保存到相册',
-              icon: 'success'
-            })
-          },
-          fail: (err) => {
-            wx.hideLoading()
-            console.error('保存图片失败', err)
-            // 检查权限
-            if (err.errMsg.includes('auth')) {
-                wx.showModal({
-                    title: '提示',
-                    content: '需要保存到相册权限，请在设置中开启',
-                    success: (res) => {
-                        if (res.confirm) {
-                            wx.openSetting()
-                        }
-                    }
-                })
-            } else {
-                wx.showToast({
-                    title: '保存失败',
-                    icon: 'none'
-                })
-            }
-          }
-        })
-      },
-      fail: (err) => {
-        wx.hideLoading()
-        console.error('生成图片失败', err)
-        wx.showToast({
-          title: '生成失败',
-          icon: 'none'
-        })
-      }
-    })
+    // 逻辑已移至 onShareImage 中的 canvasToTempFilePath 回调
   },
 
   /**

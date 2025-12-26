@@ -236,5 +236,43 @@
   </view>
 
   <!-- 绘图 Canvas (隐藏) -->
-  <canvas type="2d" id="shareCanvas" style="position: fixed; left: -9999px; width: 375px; height: 500px;"></canvas>
+  <canvas type="2d" id="shareCanvas" style="position: fixed; left: -9999px; width: 375px; height: 720px;"></canvas>
+
+  <!-- 分享预览弹窗 -->
+  <view wx:if="{{showSharePreview}}" class="share-preview-modal">
+    <view class="preview-mask" bindtap="closeSharePreview"></view>
+    <view class="preview-container">
+      <view class="preview-header">
+        <text class="preview-title">保存与分享</text>
+        <view class="preview-close" bindtap="closeSharePreview">✕</view>
+      </view>
+      
+      <view class="preview-image-wrap">
+        <image class="share-image" src="{{shareImage}}" mode="widthFix" bindtap="previewShareImage"></image>
+      </view>
+      
+      <view class="share-actions">
+        <view class="share-action-item" bindtap="saveImageToPhotos">
+          <view class="action-icon-circle icon-save">
+            <text>⬇️</text>
+          </view>
+          <text class="action-label">保存图片</text>
+        </view>
+        
+        <view class="share-action-item" bindtap="previewShareImage">
+          <view class="action-icon-circle icon-wechat">
+            <text>💬</text>
+          </view>
+          <text class="action-label">发给朋友</text>
+        </view>
+        
+        <view class="share-action-item" bindtap="shareToTimeline">
+          <view class="action-icon-circle icon-timeline">
+            <text>⭕</text>
+          </view>
+          <text class="action-label">朋友圈</text>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>
