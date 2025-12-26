@@ -50,74 +50,12 @@ Page({
     }
   },
 
-  onShow() {
-    // 每次显示时刷新用户信息
-    this.loadUserInfo();
-  },
-
   /**
-   * 加载用户信息
+   * 返回"我的"界面
    */
-  loadUserInfo() {
-    const userInfo = app.globalData.userInfo;
-    this.setData({ userInfo });
-  },
-
-  /**
-   * 微信登录
-   */
-  async handleLogin() {
-    try {
-      wx.showLoading({ title: '登录中...' });
-
-      // 调用微信登录
-      await app.login();
-
-      // 获取用户信息
-      const userInfo = app.globalData.userInfo;
-      
-      this.setData({ userInfo });
-      
-      wx.hideLoading();
-      wx.showToast({
-        title: '登录成功',
-        icon: 'success'
-      });
-    } catch (err) {
-      wx.hideLoading();
-      console.error('登录失败:', err);
-      
-      if (err.errMsg && err.errMsg.includes('getUserProfile:fail auth deny')) {
-        wx.showToast({
-          title: '您取消了授权',
-          icon: 'none'
-        });
-      } else {
-        wx.showToast({
-          title: '登录失败，请重试',
-          icon: 'none'
-        });
-      }
-    }
-  },
-
-  /**
-   * 退出登�?
-   */
-  handleLogout() {
-    wx.showModal({
-      title: '提示',
-      content: '确定退出登录吗？',
-      success: (res) => {
-        if (res.confirm) {
-          app.logout();
-          this.setData({ userInfo: null });
-          wx.showToast({
-            title: '已退出登录',
-            icon: 'success'
-          });
-        }
-      }
+  goBack() {
+    wx.switchTab({
+      url: '/pages/profile/profile'
     });
   }
 })

@@ -82,15 +82,17 @@ Page({
    * 查看我的历史记录
    */
   goToHistory() {
-    if (!this.data.isLoggedIn) {
-      wx.showToast({
-        title: '请先登录',
-        icon: 'none'
-      });
-      return;
-    }
     wx.switchTab({
       url: '/pages/history/history'
+    });
+  },
+
+  /**
+   * 跳转到关于页面
+   */
+  goToAbout() {
+    wx.navigateTo({
+      url: '/pages/about/about'
     });
   },
 

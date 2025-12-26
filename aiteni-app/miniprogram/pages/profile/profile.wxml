@@ -55,7 +55,7 @@
 
   <!-- 设置选项 -->
   <view class="menu-section">
-    <navigator class="menu-item" url="/pages/about/about">
+    <view class="menu-item" bindtap="goToAbout">
       <view class="menu-left">
         <text class="menu-icon">ℹ️</text>
         <text class="menu-title">关于我们</text>
@@ -63,7 +63,7 @@
       <view class="menu-right">
         <text class="arrow">›</text>
       </view>
-    </navigator>
+    </view>
   </view>
 
   <!-- 退出登录按钮 -->

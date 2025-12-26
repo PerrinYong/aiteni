@@ -1,6 +1,11 @@
 <!--pages/about/about.wxml-->
 <!-- 根容器使用.page-container + 动态绑定安全留白 -->
 <view class="page-container" style="padding-top: {{safeTopPadding}}rpx;">
+  <!-- 关闭按钮 -->
+  <view class="close-btn" bindtap="goBack">
+    <text class="close-icon">✕</text>
+  </view>
+  
   <!-- 内容区 -->
   <view class="page-content">
     <!-- 品牌介绍 -->
@@ -15,30 +20,6 @@
       <text class="app-name">Ai-TEni 爱特尼网球</text>
       <text class="app-version">v1.0.0</text>
       <text class="app-slogan">让每位球友都能找到真实的网球水平</text>
-    </view>
-
-    <!-- 微信登录区域 -->
-    <view class="card card-soft">
-      <view class="card-title">
-        <text class="emoji-icon">👤</text>
-        <text class="h3">用户信息</text>
-      </view>
-      
-      <view wx:if="{{userInfo}}" class="user-info">
-        <image class="user-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
-        <view class="user-details">
-          <text class="user-name">{{userInfo.nickName}}</text>
-          <text class="user-status">已登录</text>
-        </view>
-        <button class="btn-text" bindtap="handleLogout">退出</button>
-      </view>
-      
-      <view wx:else class="login-prompt">
-        <text class="prompt-text">登录后可同步评测结果</text>
-        <button class="btn-primary" bindtap="handleLogin">
-          <text>微信登录</text>
-        </button>
-      </view>
     </view>
 
     <!-- NTRP介绍 -->

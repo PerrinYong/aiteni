@@ -5,6 +5,38 @@
   min-height: 100vh;
   background: var(--bg-gray);
   box-sizing: border-box;
+  position: relative;
+}
+
+/* 关闭按钮 */
+.close-btn {
+  position: fixed;
+  top: 20rpx;
+  top: calc(20rpx + constant(safe-area-inset-top));
+  top: calc(20rpx + env(safe-area-inset-top));
+  right: 32rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: all 0.2s ease;
+}
+
+.close-btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 1);
+}
+
+.close-icon {
+  font-size: 36rpx;
+  color: var(--text-sub);
+  font-weight: 300;
+  line-height: 1;
 }
 
 /* 内容区 */

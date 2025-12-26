@@ -32,10 +32,6 @@
       {
         "pagePath": "pages/profile/profile",
         "text": "我的"
-      },
-      {
-        "pagePath": "pages/about/about",
-        "text": "关于"
       }
     ]
   },
