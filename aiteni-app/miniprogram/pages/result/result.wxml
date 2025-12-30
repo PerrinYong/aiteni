@@ -227,12 +227,12 @@
     <button class="btn-bottom" bindtap="toggleDetail">
       <text class="btn-bottom-icon">{{showDetail ? '⬆️' : '📝'}}</text>
       <text class="btn-bottom-text">{{showDetail ? '收起' : '详细'}}</text>
-    </button>
+        </button>
     
     <button class="btn-bottom btn-bottom--primary" bindtap="onShareImage">
       <text class="btn-bottom-icon">📤</text>
       <text class="btn-bottom-text">分享</text>
-    </button>
+        </button>
   </view>
 
   <!-- 绘图 Canvas (隐藏) -->

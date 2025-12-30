@@ -415,7 +415,7 @@ Page({
   /**
    * 生成分享图片
    */
-  onShareImage() {
+  async onShareImage() {
     if (this.data.shareImage) {
       this.setData({ showSharePreview: true });
       return;
@@ -425,6 +425,52 @@ Page({
     wx.showLoading({
       title: '生成海报中...',
     });
+
+    // === 获取二维码 ===
+    let qrCodePath = null;
+    try {
+      const qrPath = this.data.resultId ? `pages/result/result?resultId=${this.data.resultId}` : 'pages/welcome/welcome';
+      
+      // 判断环境 (简单的环境判断，生产环境使用域名，开发环境使用IP)
+      const { miniProgram } = wx.getAccountInfoSync();
+      const API_BASE = (miniProgram.envVersion === 'release') 
+        ? 'https://perrin-minigame.cloud/api' 
+        : 'http://182.92.109.59/api';
+
+      qrCodePath = await new Promise((resolve) => {
+        wx.request({
+          url: `${API_BASE}/generate_qrcode`,
+          method: 'POST',
+          data: { path: qrPath, width: 200 },
+          responseType: 'arraybuffer',
+          success: (res) => {
+            if (res.statusCode === 200) {
+              const fs = wx.getFileSystemManager();
+              const filePath = `${wx.env.USER_DATA_PATH}/share_qrcode.jpg`;
+              fs.writeFile({
+                filePath,
+                data: res.data,
+                encoding: 'binary',
+                success: () => resolve(filePath),
+                fail: (e) => {
+                    console.error('写入二维码文件失败', e);
+                    resolve(null);
+                }
+              });
+            } else {
+              console.error('获取二维码API失败', res);
+              resolve(null);
+            }
+          },
+          fail: (e) => {
+            console.error('请求二维码接口失败', e);
+            resolve(null);
+          }
+        });
+      });
+    } catch (e) {
+      console.error('二维码流程异常', e);
+    }
 
     const query = wx.createSelectorQuery();
     query.select('#shareCanvas')
@@ -446,15 +492,35 @@ Page({
         canvas.height = res[0].height * dpr;
         ctx.scale(dpr, dpr);
         
-        // 绘制内容
-        this.drawShareContent(ctx, canvas, res[0].width, res[0].height);
+        // 绘制内容 (改为异步调用)
+        this.drawShareContent(ctx, canvas, res[0].width, res[0].height, qrCodePath)
+          .then(() => {
+             // 导出图片
+             wx.canvasToTempFilePath({
+               canvas: canvas,
+               success: (res) => {
+                 wx.hideLoading();
+                 this.setData({
+                   shareImage: res.tempFilePath,
+                   showSharePreview: true,
+                   isGeneratingImage: false
+                 });
+               },
+               fail: (err) => {
+                 wx.hideLoading();
+                 this.setData({ isGeneratingImage: false });
+                 console.error('生成图片失败', err);
+                 wx.showToast({ title: '生成失败', icon: 'none' });
+               }
+             });
+          });
       });
   },
 
   /**
    * 绘制海报内容
    */
-  drawShareContent(ctx, canvas, width, height) {
+  async drawShareContent(ctx, canvas, width, height, qrCodePath) {
     const { result } = this.data;
     if (!result) return;
 
@@ -478,12 +544,12 @@ Page({
     this.drawPosterHero(ctx, P, y, cardW, heroH, result);
     y += heroH + gap;
 
-    // 优势卡（简略）
+    // 优势卡（简略）- 只显示前2条以留出底部空间
     y = this.drawPosterListCard(ctx, P, y, cardW, {
       icon: '💪',
       title: '你的主要优势',
       dotColor: '#1FA27A',
-      rows: (result.advantages || []).slice(0, 3),
+      rows: (result.advantages || []).slice(0, 2),
       rowIcon: '🎾',
       rowIconBg: 'rgba(31, 162, 122, 0.15)',
       rowIconColor: '#1FA27A',
@@ -492,12 +558,12 @@ Page({
     });
     y += gap;
 
-    // 短板卡（简略）
+    // 短板卡（简略）- 只显示前2条以留出底部空间
     y = this.drawPosterListCard(ctx, P, y, cardW, {
       icon: '🎯',
       title: '当前最值得优先提升的环节',
       dotColor: '#F97316',
-      rows: (result.weaknesses || []).slice(0, 3),
+      rows: (result.weaknesses || []).slice(0, 2),
       rowIcon: '🎯',
       rowIconBg: 'rgba(249, 115, 22, 0.12)',
       rowIconColor: '#F97316',
@@ -505,31 +571,84 @@ Page({
       chipColor: '#F97316'
     });
 
-    // 底部说明（对应页面“仅供训练参考”语气）
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillStyle = 'rgba(107, 114, 128, 0.9)';
-    ctx.font = '12px sans-serif';
-    ctx.fillText('AiTeni 智能网球评测 · 数据仅供训练参考', width / 2, height - 12);
+    // === 绘制底部 Footer (Logo + Slogan + QR) ===
+    await this.drawFooter(ctx, canvas, width, height, qrCodePath);
+    
+    return true;
+  },
 
-    // 导出图片
-    wx.canvasToTempFilePath({
-      canvas: canvas,
-      success: (res) => {
-        wx.hideLoading();
-        this.setData({
-          shareImage: res.tempFilePath,
-          showSharePreview: true,
-          isGeneratingImage: false
+  /**
+   * 绘制底部 Footer
+   */
+  async drawFooter(ctx, canvas, width, height, qrCodePath) {
+    const footerH = 120;
+    const y = height - footerH;
+    
+    // 背景
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, y, width, footerH);
+    
+    // 顶部分割线（可选，太细可能看不清，这里用淡淡的阴影替代）
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.03)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = -2;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, y, width, 2); // 仅为了产生向上阴影
+    ctx.restore();
+
+    // === 左侧品牌信息 ===
+    const leftP = 24;
+    let textY = y + 40;
+    
+    // LOGO/标题
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = '#1F2933';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText('AiTeni', leftP, textY);
+    
+    // 智能网球评测
+    textY += 32;
+    ctx.fillStyle = '#3E4C59';
+    ctx.font = '15px sans-serif';
+    ctx.fillText('智能网球评测系统', leftP, textY);
+    
+    // 数据声明
+    textY += 24;
+    ctx.fillStyle = '#9AA5B1';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('数据仅供训练参考', leftP, textY);
+
+    // === 右侧二维码 ===
+    if (qrCodePath) {
+      try {
+        const qrSize = 80;
+        const qrX = width - 24 - qrSize;
+        const qrY = y + (footerH - qrSize) / 2; // 垂直居中
+
+        const img = canvas.createImage();
+        
+        await new Promise((resolve, reject) => {
+           img.onload = resolve;
+           img.onerror = (e) => { console.error('二维码加载失败', e); resolve(); }; // 失败不阻断
+           img.src = qrCodePath;
         });
-      },
-      fail: (err) => {
-        wx.hideLoading();
-        this.setData({ isGeneratingImage: false });
-        console.error('生成图片失败', err);
-        wx.showToast({ title: '生成失败', icon: 'none' });
+
+        // 绘制二维码
+        ctx.drawImage(img, qrX, qrY, qrSize, qrSize);
+        
+        // 扫码提示文字 (仅当二维码绘制成功时绘制)
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#616E7C';
+        ctx.font = '10px sans-serif';
+        ctx.textBaseline = 'top'; // 确保垂直对齐一致
+        ctx.fillText('长按识别', qrX + qrSize / 2, qrY + qrSize + 8);
+
+      } catch (e) {
+        console.error('绘制二维码失败', e);
       }
-    });
+    }
   },
 
   /**
