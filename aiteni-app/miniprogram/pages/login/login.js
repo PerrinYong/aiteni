@@ -9,6 +9,7 @@ Page({
     avatarUrl: defaultAvatarUrl, // 用户头像（使用微信官方默认头像）
     nickName: '', // 用户昵称
     isLoading: false, // 加载状态
+    agreedPrivacy: true, // 隐私协议勾选状态（默认勾选）
   },
 
   // 页面加载
@@ -87,20 +88,61 @@ Page({
   },
 
   /**
+   * 隐私协议勾选状态改变
+   */
+  onPrivacyAgreementChange(e) {
+    const agreed = e.detail.value.length > 0;
+    this.setData({
+      agreedPrivacy: agreed
+    });
+    console.log('[Login] 隐私协议勾选状态:', agreed);
+  },
+
+  /**
+   * 点击用户协议链接
+   */
+  onUserAgreementTap() {
+    wx.navigateTo({
+      url: '/pages/agreement/agreement?type=user'
+    });
+  },
+
+  /**
+   * 点击隐私政策链接
+   */
+  onPrivacyPolicyTap() {
+    wx.navigateTo({
+      url: '/pages/agreement/agreement?type=privacy'
+    });
+  },
+
+  /**
    * 微信登录（使用官方最新推荐方式）
    * 
    * 流程说明：
    * 1. 用户通过 open-type="chooseAvatar" 选择头像
    * 2. 用户通过 type="nickname" 输入昵称
-   * 3. 点击登录按钮
-   * 4. 调用 wx.login() 获取临时登录凭证 code
-   * 5. 将 code + 头像 + 昵称 传给后端
-   * 6. 后端调用微信接口用 code 换取 openid
-   * 7. 后端生成 JWT Token 返回给前端
-   * 8. 前端存储 Token，完成登录
+   * 3. 用户勾选隐私协议
+   * 4. 点击登录按钮
+   * 5. 调用微信隐私授权接口
+   * 6. 调用 wx.login() 获取临时登录凭证 code
+   * 7. 将 code + 头像 + 昵称 传给后端
+   * 8. 后端调用微信接口用 code 换取 openid
+   * 9. 后端生成 JWT Token 返回给前端
+   * 10. 前端存储 Token，完成登录
    */
   async wxLogin() {
-    const { avatarUrl, nickName } = this.data;
+    const { avatarUrl, nickName, agreedPrivacy } = this.data;
+    
+    // 校验隐私协议是否勾选（必须用户主动勾选）
+    if (!agreedPrivacy) {
+      wx.showToast({
+        title: '请先阅读并同意隐私政策',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
     
     // 校验头像（不能是默认头像）
     if (avatarUrl === defaultAvatarUrl) {
@@ -128,7 +170,38 @@ Page({
     try {
       console.log('[Login] 开始微信登录流程');
       
-      // 1. 调用 wx.login() 获取临时登录凭证 code（有效期5分钟，只能使用一次）
+      // 1. 调用微信隐私授权接口（从基础库 2.32.3 开始支持）
+      // 在用户未同意隐私服务协议的情况下，开发者不可调用任何与个人信息相关的接口能力
+      try {
+        const privacyRes = await new Promise((resolve, reject) => {
+          if (wx.miniapp && wx.miniapp.agreePrivacyAuthorization) {
+            wx.miniapp.agreePrivacyAuthorization({
+              success: resolve,
+              fail: reject
+            });
+          } else {
+            // 如果基础库版本不支持，直接继续（兼容旧版本）
+            console.log('[Login] 当前基础库版本不支持隐私授权接口，跳过');
+            resolve({});
+          }
+        });
+        console.log('[Login] 隐私授权成功');
+      } catch (privacyErr) {
+        console.error('[Login] 隐私授权失败:', privacyErr);
+        // 如果用户拒绝授权，提示用户
+        if (privacyErr.errMsg && privacyErr.errMsg.includes('cancel')) {
+          wx.showToast({
+            title: '需要同意隐私政策才能登录',
+            icon: 'none',
+            duration: 2000
+          });
+          this.setData({ isLoading: false });
+          return;
+        }
+        throw privacyErr;
+      }
+      
+      // 2. 调用 wx.login() 获取临时登录凭证 code（有效期5分钟，只能使用一次）
       const loginRes = await wx.login();
       const code = loginRes.code;
       
@@ -138,7 +211,7 @@ Page({
       
       console.log('[Login] 获取到code:', code.substring(0, 10) + '...');
       
-      // 2. 调用后端登录接口，传递 code、头像、昵称
+      // 3. 调用后端登录接口，传递 code、头像、昵称
       // 后端会用 code 调用微信接口换取 openid 和 session_key
       console.log('[Login] 调用后端登录接口');
       const res = await api.wechatLogin({

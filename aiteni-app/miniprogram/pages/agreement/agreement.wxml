@@ -1,0 +1,315 @@
+<!--pages/agreement/agreement.wxml-->
+<view class="page-container">
+  <!-- 内容区 -->
+  <scroll-view class="agreement-content" scroll-y>
+    <!-- 用户服务协议 -->
+    <view wx:if="{{type === 'user'}}" class="agreement-section">
+      <view class="agreement-title">用户服务协议</view>
+      <view class="agreement-update-time">生效日期：2026年1月1日</view>
+      
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">一、服务条款构成</text>
+        <text class="paragraph-content">
+          欢迎使用"爱特尼网球评测"小程序（以下简称"本小程序"）。在使用本小程序服务前，请您仔细阅读并充分理解本《用户服务协议》（以下简称"本协议"）。当您点击同意本协议或实际使用本小程序服务时，即表示您已充分理解并同意接受本协议的全部内容。
+        </text>
+        <text class="paragraph-content">
+          本小程序服务需同时遵守以下协议：
+        </text>
+        <text class="paragraph-list">1. 《微信小程序平台服务条款》作为主协议</text>
+        <text class="paragraph-list">2. 《微信公众平台服务协议》及运营规范</text>
+        <text class="paragraph-list">3. 《小程序开放的服务类目》与《常见拒绝情形》</text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">二、服务说明</text>
+        <text class="paragraph-content">
+          本小程序是一款基于NTRP（National Tennis Rating Program）标准的网球水平评估工具，旨在为用户提供专业的网球技术水平评估服务。本小程序通过用户填写评估问卷，从多个维度分析用户的网球技术水平，并提供相应的评估报告和改进建议。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">三、用户注册与使用</text>
+        <text class="paragraph-content">
+          3.1 用户资格：使用本小程序服务的用户应当是具有完全民事行为能力的自然人。如您不具备前述主体资格，则您及您的监护人应承担因此而导致的一切后果。
+        </text>
+        <text class="paragraph-content">
+          3.2 注册规范：用户在使用本小程序前，需要通过微信授权登录。登录时，用户需要提供微信头像和昵称信息。用户应保证所提供信息的真实性、准确性和完整性。
+        </text>
+        <text class="paragraph-content">
+          3.3 账号安全：用户应当妥善保管其微信账号信息，不得将账号信息提供给第三方使用。因用户保管不当导致账号被盗用或信息泄露的，本小程序不承担责任。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">四、用户行为规范</text>
+        <text class="paragraph-content">
+          4.1 用户在使用本小程序服务时，应当遵守相关法律法规，不得利用本小程序从事违法违规活动。
+        </text>
+        <text class="paragraph-content">
+          4.2 用户不得恶意注册、使用本小程序，不得干扰、破坏本小程序的正常运行。
+        </text>
+        <text class="paragraph-content">
+          4.3 用户应当如实填写评估问卷，不得提供虚假信息或恶意刷取评估结果。
+        </text>
+        <text class="paragraph-content">
+          4.4 用户不得将本小程序用于商业目的，不得将评估结果用于任何商业推广或宣传。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">五、服务内容与变更</text>
+        <text class="paragraph-content">
+          5.1 本小程序提供的服务包括但不限于：网球水平评估、评估报告生成、历史记录查看等功能。
+        </text>
+        <text class="paragraph-content">
+          5.2 本小程序有权根据业务发展需要，对服务内容进行调整、更新或终止。如发生重大变更，本小程序将通过适当方式通知用户。
+        </text>
+        <text class="paragraph-content">
+          5.3 本小程序不对评估结果的准确性、完整性或适用性作任何明示或暗示的保证。评估结果仅供参考，不构成任何专业建议。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">六、知识产权</text>
+        <text class="paragraph-content">
+          6.1 本小程序的所有内容，包括但不限于文字、图片、音频、视频、软件、程序、版面设计等，均受知识产权法律法规保护。
+        </text>
+        <text class="paragraph-content">
+          6.2 未经本小程序书面许可，用户不得以任何形式复制、传播、展示、镜像、上传、下载本小程序的任何内容。
+        </text>
+        <text class="paragraph-content">
+          6.3 用户在本小程序上发布的内容，其知识产权归用户所有。但用户同意授予本小程序免费、非独占的使用许可，用于提供和改进服务。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">七、免责声明</text>
+        <text class="paragraph-content">
+          7.1 本小程序提供的评估服务仅供参考，不构成任何专业建议或承诺。用户应当根据自身实际情况，谨慎使用评估结果。
+        </text>
+        <text class="paragraph-content">
+          7.2 本小程序不对因用户使用或无法使用本服务而产生的任何直接、间接、偶然、特殊或后果性损害承担责任。
+        </text>
+        <text class="paragraph-content">
+          7.3 本小程序不对因网络故障、系统维护、不可抗力等原因导致的服务中断或数据丢失承担责任。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">八、协议修改与终止</text>
+        <text class="paragraph-content">
+          8.1 本小程序有权根据法律法规变化及业务发展需要，随时修改本协议。修改后的协议将在本小程序内公布，自公布之日起生效。
+        </text>
+        <text class="paragraph-content">
+          8.2 如用户不同意修改后的协议，应当停止使用本小程序服务。继续使用视为接受修改后的协议。
+        </text>
+        <text class="paragraph-content">
+          8.3 本小程序有权在以下情况下终止向用户提供服务：
+        </text>
+        <text class="paragraph-list">（1）用户违反本协议规定；</text>
+        <text class="paragraph-list">（2）用户利用本小程序从事违法违规活动；</text>
+        <text class="paragraph-list">（3）因业务调整需要终止服务。</text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">九、法律适用与争议解决</text>
+        <text class="paragraph-content">
+          9.1 本协议的订立、生效、解释、履行和争议解决均适用中华人民共和国大陆地区法律法规。
+        </text>
+        <text class="paragraph-content">
+          9.2 如因本协议产生任何争议，双方应友好协商解决；协商不成的，任何一方均可向本小程序运营方所在地有管辖权的人民法院提起诉讼。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">十、其他条款</text>
+        <text class="paragraph-content">
+          10.1 如本协议的任何条款被认定为无效或不可执行，不影响其他条款的效力。
+        </text>
+        <text class="paragraph-content">
+          10.2 本协议的最终解释权归本小程序运营方所有。
+        </text>
+        <text class="paragraph-content">
+          10.3 如您对本协议有任何疑问，可通过小程序内提供的联系方式与我们联系。
+        </text>
+      </view>
+    </view>
+
+    <!-- 隐私政策 -->
+    <view wx:if="{{type === 'privacy'}}" class="agreement-section">
+      <view class="agreement-title">隐私政策</view>
+      <view class="agreement-update-time">生效日期：2026年1月1日</view>
+      
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">一、引言</text>
+        <text class="paragraph-content">
+          "爱特尼网球评测"小程序（以下简称"本小程序"）非常重视用户的隐私保护。本《隐私政策》（以下简称"本政策"）旨在向您说明我们如何收集、使用、存储和保护您的个人信息。
+        </text>
+        <text class="paragraph-content">
+          请您在使用本小程序前，仔细阅读并充分理解本政策。当您点击同意本政策或实际使用本小程序服务时，即表示您已充分理解并同意本政策的全部内容。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">二、信息收集范围</text>
+        <text class="paragraph-content">
+          本小程序严格遵循最小必要原则，仅收集提供服务所必需的个人信息。我们收集的信息包括：
+        </text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">2.1 用户基本信息</text>
+        </text>
+        <text class="paragraph-list">• 微信头像：用于在个人中心显示用户头像</text>
+        <text class="paragraph-list">• 微信昵称：用于在个人中心和评估记录中标识用户</text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">2.2 评估数据</text>
+        </text>
+        <text class="paragraph-list">• 评估问卷答案：用于生成网球水平评估报告</text>
+        <text class="paragraph-list">• 评估结果：包括评分、评语、改进建议等</text>
+        <text class="paragraph-list">• 评估时间：用于记录评估历史</text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">2.3 设备信息</text>
+        </text>
+        <text class="paragraph-list">• 设备型号、操作系统版本：用于优化服务体验和排查问题</text>
+        <text class="paragraph-list">• 网络信息：用于确保服务正常运行</text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">三、信息收集方式</text>
+        <text class="paragraph-content">
+          3.1 用户主动提供：当您使用微信授权登录时，我们会获取您的微信头像和昵称信息。这些信息由您主动授权提供。
+        </text>
+        <text class="paragraph-content">
+          3.2 自动收集：当您使用本小程序服务时，我们会自动收集必要的设备信息和日志信息，用于保障服务正常运行。
+        </text>
+        <text class="paragraph-content">
+          3.3 评估数据：当您填写评估问卷时，我们会收集您的答案信息，用于生成评估报告。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">四、信息使用目的</text>
+        <text class="paragraph-content">
+          我们收集您的个人信息，仅用于以下目的：
+        </text>
+        <text class="paragraph-list">• 提供网球水平评估服务，生成个性化评估报告</text>
+        <text class="paragraph-list">• 保存和管理您的评估历史记录</text>
+        <text class="paragraph-list">• 优化和改进服务质量，提升用户体验</text>
+        <text class="paragraph-list">• 保障服务安全，防范安全风险</text>
+        <text class="paragraph-list">• 遵守法律法规要求，配合监管要求</text>
+        <text class="paragraph-content">
+          我们不会将您的个人信息用于任何其他目的，也不会未经您同意向第三方提供您的个人信息。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">五、信息存储与保护</text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">5.1 存储期限</text>
+        </text>
+        <text class="paragraph-content">
+          我们仅在为您提供服务所必需的期间内保留您的个人信息。当您注销账号或主动要求删除数据时，我们将删除您的个人信息，法律法规另有规定的除外。
+        </text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">5.2 存储地点</text>
+        </text>
+        <text class="paragraph-content">
+          您的个人信息将存储在中华人民共和国境内。如需跨境传输，我们将严格按照法律法规要求执行。
+        </text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">5.3 安全措施</text>
+        </text>
+        <text class="paragraph-content">
+          我们采取以下技术和管理措施保护您的个人信息安全：
+        </text>
+        <text class="paragraph-list">• 采用加密传输技术，确保数据传输安全</text>
+        <text class="paragraph-list">• 实施访问控制，限制个人信息访问权限</text>
+        <text class="paragraph-list">• 定期进行安全测试和漏洞修复</text>
+        <text class="paragraph-list">• 建立安全事件应急响应机制</text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">六、用户权利保障</text>
+        <text class="paragraph-content">
+          根据相关法律法规，您对自己的个人信息享有以下权利：
+        </text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">6.1 访问权</text>
+        </text>
+        <text class="paragraph-content">
+          您有权访问我们收集的您的个人信息，包括查看您的头像、昵称、评估记录等。
+        </text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">6.2 更正权</text>
+        </text>
+        <text class="paragraph-content">
+          您有权更正不准确的个人信息。您可以在个人中心修改您的昵称和头像。
+        </text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">6.3 删除权</text>
+        </text>
+        <text class="paragraph-content">
+          您有权要求我们删除您的个人信息。您可以通过以下方式行使删除权：
+        </text>
+        <text class="paragraph-list">• 在个人中心删除单条评估记录</text>
+        <text class="paragraph-list">• 联系客服要求删除所有个人信息</text>
+        <text class="paragraph-list">• 注销账号（将删除所有相关个人信息）</text>
+        <text class="paragraph-content">
+          <text class="paragraph-subtitle">6.4 撤回同意权</text>
+        </text>
+        <text class="paragraph-content">
+          您有权随时撤回对个人信息处理的同意。撤回同意后，我们将停止处理您的个人信息，但不会影响撤回前基于您的同意已进行的个人信息处理。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">七、信息共享与披露</text>
+        <text class="paragraph-content">
+          7.1 我们不会向任何第三方出售、出租或以其他方式披露您的个人信息，但以下情况除外：
+        </text>
+        <text class="paragraph-list">• 获得您的明确同意</text>
+        <text class="paragraph-list">• 法律法规规定或司法机关、行政机关依法要求提供</text>
+        <text class="paragraph-list">• 为维护本小程序或用户的安全、合法权益</text>
+        <text class="paragraph-content">
+          7.2 我们可能与第三方服务提供商共享必要的技术信息（如设备信息），以保障服务正常运行，但这些信息不包含您的个人身份信息。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">八、未成年人保护</text>
+        <text class="paragraph-content">
+          8.1 本小程序主要面向成年人提供服务。如您是未成年人，请在监护人陪同下使用本小程序。
+        </text>
+        <text class="paragraph-content">
+          8.2 如我们发现收集了未成年人的个人信息，我们将尽快删除相关数据。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">九、隐私政策更新</text>
+        <text class="paragraph-content">
+          9.1 我们可能会根据法律法规变化和业务发展需要，适时更新本政策。
+        </text>
+        <text class="paragraph-content">
+          9.2 更新后的政策将在本小程序内公布，并通过适当方式通知您。如您不同意更新后的政策，请停止使用本小程序服务。
+        </text>
+        <text class="paragraph-content">
+          9.3 本政策的重大变更（如信息收集范围、使用目的等发生重大变化）将提前通知您，并重新获得您的同意。
+        </text>
+      </view>
+
+      <view class="agreement-paragraph">
+        <text class="paragraph-title">十、联系我们</text>
+        <text class="paragraph-content">
+          如您对本政策有任何疑问、意见或建议，或需要行使您的个人信息权利，您可以通过以下方式联系我们：
+        </text>
+        <text class="paragraph-content">
+          小程序内客服功能或通过小程序后台提供的联系方式。
+        </text>
+        <text class="paragraph-content">
+          我们将在收到您的请求后，在合理期限内予以回复。
+        </text>
+      </view>
+    </view>
+  </scroll-view>
+</view>
+

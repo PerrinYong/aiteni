@@ -138,18 +138,48 @@
 /* 用户协议 */
 .agreement {
   margin-top: auto;
-  text-align: center;
-  padding-bottom: 40rpx;
+  padding: 0 20rpx 40rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.agreement-checkbox-wrapper {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 600rpx;
+}
+
+.agreement-checkbox {
+  margin-right: 10rpx;
+  /* 通过负 margin 修正 checkbox 原始占位导致的垂直对齐偏差 */
+  margin-top: -6rpx;
+  flex-shrink: 0;
+  /* 缩小 checkbox 大小以匹配 24rpx 的文字 */
+  transform: scale(0.7);
+}
+
+.agreement-text-wrapper {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 1.6;
+  font-size: 24rpx;
 }
 
 .agreement-text {
   font-size: 24rpx;
   color: var(--text-sub);
+  line-height: 1.6;
 }
 
 .agreement-link {
   font-size: 24rpx;
   color: var(--primary-blue);
   font-weight: 500;
+  text-decoration: underline;
+  margin: 0 4rpx;
+  line-height: 1.6;
 }
 

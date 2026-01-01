@@ -55,9 +55,19 @@
 
   <!-- 用户协议 -->
   <view class="agreement">
-    <text class="agreement-text">登录即代表同意</text>
-    <text class="agreement-link">《用户协议》</text>
-    <text class="agreement-text">和</text>
-    <text class="agreement-link">《隐私政策》</text>
+    <label class="agreement-checkbox-wrapper">
+      <checkbox 
+        class="agreement-checkbox" 
+        value="privacy"
+        checked="{{agreedPrivacy}}"
+        bindchange="onPrivacyAgreementChange"
+      />
+      <view class="agreement-text-wrapper">
+        <text class="agreement-text">我已阅读并同意</text>
+        <text class="agreement-link" bindtap="onUserAgreementTap">《用户服务协议》</text>
+        <text class="agreement-text">和</text>
+        <text class="agreement-link" bindtap="onPrivacyPolicyTap">《隐私政策》</text>
+      </view>
+    </label>
   </view>
 </view>
