@@ -1,5 +1,10 @@
 <!--pages/login/login.wxml-->
 <view class="login-container">
+  <!-- 返回按钮 -->
+  <view class="back-btn" bindtap="cancelLogin">
+    <text class="back-icon">✕</text>
+  </view>
+
   <!-- Logo和标题 -->
   <view class="header">
     <view class="logo-box">
@@ -9,65 +14,102 @@
     <view class="app-desc">欢迎使用网球水平评估系统</view>
   </view>
 
-  <!-- 登录表单 -->
-  <view class="card card-soft login-form">
-    <!-- 头像选择（微信官方推荐方式：open-type="chooseAvatar"） -->
-    <view class="form-item">
-      <view class="form-label">选择头像</view>
-      <button 
-        class="avatar-wrapper" 
-        open-type="chooseAvatar" 
-        bind:chooseavatar="onChooseAvatar"
-      >
-        <image class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
-        <view class="avatar-tip">点击选择头像</view>
+  <!-- 第一阶段：登录提示 -->
+  <view wx:if="{{!showLoginForm}}" class="login-prompt">
+    <view class="card card-soft prompt-card">
+      <view class="prompt-icon">🔐</view>
+      <view class="prompt-title">您还未登录</view>
+      <view class="prompt-desc">登录后可保存测评记录，查看历史数据</view>
+      
+      <button class="btn-primary login-start-btn" bindtap="showLogin">
+        登录 / 注册
+      </button>
+      
+      <button class="btn-secondary cancel-btn" bindtap="cancelLogin">
+        取消
       </button>
     </view>
-    
-    <!-- 昵称输入（微信官方推荐方式：type="nickname"） -->
-    <view class="form-item">
-      <view class="form-label">输入昵称</view>
-      <view class="nickname-wrapper">
-        <input 
-          type="nickname" 
-          class="nickname-input" 
-          placeholder="请输入昵称" 
-          placeholder-class="placeholder"
-          value="{{nickName}}"
-          bindinput="onNicknameInput"
-          bindblur="onNicknameBlur"
-          maxlength="20"
-        />
-      </view>
-      <view class="nickname-hint">输入框上方会显示微信昵称</view>
-    </view>
-    
-    <!-- 登录按钮 -->
-    <button 
-      class="btn-primary login-btn {{isLoading ? 'disabled' : ''}}" 
-      bindtap="wxLogin"
-      disabled="{{isLoading}}"
-    >
-      <text wx:if="{{!isLoading}}">微信一键登录</text>
-      <text wx:else>登录中...</text>
-    </button>
   </view>
 
-  <!-- 用户协议 -->
-  <view class="agreement">
-    <label class="agreement-checkbox-wrapper">
-      <checkbox 
-        class="agreement-checkbox" 
-        value="privacy"
-        checked="{{agreedPrivacy}}"
-        bindchange="onPrivacyAgreementChange"
-      />
-      <view class="agreement-text-wrapper">
-        <text class="agreement-text">我已阅读并同意</text>
-        <text class="agreement-link" bindtap="onUserAgreementTap">《用户服务协议》</text>
-        <text class="agreement-text">和</text>
-        <text class="agreement-link" bindtap="onPrivacyPolicyTap">《隐私政策》</text>
+  <!-- 第二阶段：登录表单 -->
+  <view wx:if="{{showLoginForm}}" class="login-form-wrapper">
+    <view class="card card-soft login-form">
+      <!-- 头像选择（微信官方推荐方式：open-type="chooseAvatar"） -->
+      <view class="form-item">
+        <view class="form-label">选择头像</view>
+        <button 
+          class="avatar-wrapper" 
+          open-type="chooseAvatar" 
+          bind:chooseavatar="onChooseAvatar"
+        >
+          <image class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
+          <view class="avatar-tip">点击选择头像</view>
+        </button>
       </view>
-    </label>
+      
+      <!-- 昵称输入（微信官方推荐方式：type="nickname"） -->
+      <view class="form-item">
+        <view class="form-label">输入昵称</view>
+        <view class="nickname-wrapper">
+          <input 
+            type="nickname" 
+            class="nickname-input" 
+            placeholder="请输入昵称" 
+            placeholder-class="placeholder"
+            value="{{nickName}}"
+            bindinput="onNicknameInput"
+            bindblur="onNicknameBlur"
+            maxlength="20"
+          />
+        </view>
+        <view class="nickname-hint">输入框上方会显示微信昵称</view>
+      </view>
+      
+      <!-- 登录按钮 -->
+      <button 
+        class="btn-primary login-btn {{isLoading ? 'disabled' : ''}}" 
+        bindtap="wxLogin"
+        disabled="{{isLoading}}"
+      >
+        <text wx:if="{{!isLoading}}">微信一键登录</text>
+        <text wx:else>登录中...</text>
+      </button>
+    </view>
+
+    <!-- 用户协议 -->
+    <view class="agreement">
+      <label class="agreement-checkbox-wrapper">
+        <checkbox 
+          class="agreement-checkbox" 
+          value="privacy"
+          checked="{{agreedPrivacy}}"
+          bindchange="onPrivacyAgreementChange"
+        />
+        <view class="agreement-text-wrapper">
+          <text class="agreement-text">我已阅读并同意</text>
+          <text class="agreement-link" bindtap="onUserAgreementTap">《用户服务协议》</text>
+          <text class="agreement-text">和</text>
+          <text class="agreement-link" bindtap="onPrivacyPolicyTap">《隐私政策》</text>
+        </view>
+      </label>
+    </view>
+  </view>
+
+  <!-- 隐私协议弹窗 -->
+  <view wx:if="{{showPrivacyModal}}" class="privacy-modal-mask" bindtap="closePrivacyModal">
+    <view class="privacy-modal" catchtap="{{null}}">
+      <view class="privacy-modal-title">隐私政策</view>
+      <view class="privacy-modal-content">
+        <text class="privacy-text">请您仔细阅读</text>
+        <text class="privacy-link" bindtap="onModalUserAgreementTap">《用户服务协议》</text>
+        <text class="privacy-text">和</text>
+        <text class="privacy-link" bindtap="onModalPrivacyPolicyTap">《隐私政策》</text>
+        <text class="privacy-text">，了解我们如何收集、使用和保护您的个人信息。点击"同意"即表示您已阅读并同意相关协议。</text>
+      </view>
+      <view class="privacy-modal-footer">
+        <view class="privacy-modal-btn cancel" bindtap="closePrivacyModal">取消</view>
+        <view class="privacy-modal-btn confirm" bindtap="agreePrivacy">同意</view>
+      </view>
+    </view>
   </view>
 </view>

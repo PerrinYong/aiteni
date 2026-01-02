@@ -53,11 +53,12 @@ App({
     if (!token) {
       wx.showModal({
         title: '需要登录',
-        content: '请先登录后再使用',
+        content: '请先登录后再使用该功能',
         confirmText: '去登录',
+        cancelText: '取消',
         success: (res) => {
           if (res.confirm) {
-            wx.redirectTo({
+            wx.navigateTo({
               url: '/pages/login/login'
             });
           }
@@ -79,9 +80,9 @@ App({
     wx.removeStorageSync('userInfo');
     wx.removeStorageSync('token');
     
-    // 跳转到登录页
-    wx.redirectTo({
-      url: '/pages/login/login'
+    // 退出登录后返回首页，不强制跳转到登录页
+    wx.switchTab({
+      url: '/pages/welcome/welcome'
     });
   }
 });

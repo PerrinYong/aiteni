@@ -28,7 +28,6 @@ Page({
   onLoad() {
     // 初始化安全区域适配
     this.initSafeArea();
-    this.loadHistory();
   },
 
   /**
@@ -51,7 +50,33 @@ Page({
   },
 
   onShow() {
-    // 每次显示时刷新历史记录
+    // 检查是否已登录
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      // 未登录，弹窗提示
+      wx.showModal({
+        title: '需要登录',
+        content: '登录后可查看您的测评历史记录',
+        confirmText: '去登录',
+        cancelText: '取消',
+        success: (res) => {
+          if (res.confirm) {
+            // 用户确认登录，跳转到登录页
+            wx.navigateTo({
+              url: '/pages/login/login?from=history'
+            });
+          } else {
+            // 用户取消，返回到首页
+            wx.switchTab({
+              url: '/pages/welcome/welcome'
+            });
+          }
+        }
+      });
+      return;
+    }
+    
+    // 已登录，刷新历史记录
     this.refreshHistory();
   },
 

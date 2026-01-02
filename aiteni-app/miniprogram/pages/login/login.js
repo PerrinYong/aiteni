@@ -9,14 +9,22 @@ Page({
     avatarUrl: defaultAvatarUrl, // 用户头像（使用微信官方默认头像）
     nickName: '', // 用户昵称
     isLoading: false, // 加载状态
-    agreedPrivacy: true, // 隐私协议勾选状态（默认勾选）
+    agreedPrivacy: false, // 隐私协议勾选状态（默认不勾选）
+    showLoginForm: false, // 是否显示登录表单（默认显示提示页面）
+    fromPage: '', // 来源页面
+    showPrivacyModal: false, // 是否显示隐私协议弹窗
   },
 
   // 页面加载
   onLoad(options) {
     console.log('[Login] 页面加载');
     
-    // 检查是否已经登录
+    // 获取来源页面参数
+    if (options.from) {
+      this.setData({ fromPage: options.from });
+    }
+    
+    // 检查是否已经登录，如果已登录则返回
     this.checkLoginStatus();
   },
 
@@ -64,18 +72,16 @@ Page({
       // 验证Token是否有效
       api.verifyToken()
         .then(res => {
-          console.log('[Login] Token验证成功，跳转到首页');
+          console.log('[Login] Token验证成功，返回上一页');
           wx.showToast({
-            title: '已登录',
+            title: '您已登录',
             icon: 'success',
             duration: 1500
           });
           
-          // 延迟跳转
+          // 延迟返回
           setTimeout(() => {
-            wx.switchTab({
-              url: '/pages/welcome/welcome'
-            });
+            wx.navigateBack();
           }, 1500);
         })
         .catch(err => {
@@ -85,6 +91,22 @@ Page({
           wx.removeStorageSync('userInfo');
         });
     }
+  },
+
+  /**
+   * 显示登录表单
+   */
+  showLogin() {
+    this.setData({
+      showLoginForm: true
+    });
+  },
+
+  /**
+   * 取消登录，返回上一页
+   */
+  cancelLogin() {
+    wx.navigateBack();
   },
 
   /**
@@ -117,6 +139,46 @@ Page({
   },
 
   /**
+   * 弹窗中点击用户协议链接
+   */
+  onModalUserAgreementTap() {
+    wx.navigateTo({
+      url: '/pages/agreement/agreement?type=user'
+    });
+  },
+
+  /**
+   * 弹窗中点击隐私政策链接
+   */
+  onModalPrivacyPolicyTap() {
+    wx.navigateTo({
+      url: '/pages/agreement/agreement?type=privacy'
+    });
+  },
+
+  /**
+   * 关闭隐私协议弹窗 - 取消
+   */
+  closePrivacyModal() {
+    this.setData({
+      showPrivacyModal: false
+    });
+  },
+
+  /**
+   * 同意隐私协议
+   */
+  agreePrivacy() {
+    this.setData({
+      agreedPrivacy: true,
+      showPrivacyModal: false
+    }, () => {
+      // 勾选后继续登录流程
+      this.wxLogin();
+    });
+  },
+
+  /**
    * 微信登录（使用官方最新推荐方式）
    * 
    * 流程说明：
@@ -136,10 +198,9 @@ Page({
     
     // 校验隐私协议是否勾选（必须用户主动勾选）
     if (!agreedPrivacy) {
-      wx.showToast({
-        title: '请先阅读并同意隐私政策',
-        icon: 'none',
-        duration: 2000
+      // 显示自定义隐私协议弹窗
+      this.setData({
+        showPrivacyModal: true
       });
       return;
     }
@@ -233,11 +294,16 @@ Page({
         duration: 2000
       });
       
-      // 5. 跳转到首页
+      // 5. 返回上一页或跳转到首页
       setTimeout(() => {
-        wx.switchTab({
-          url: '/pages/welcome/welcome'
-        });
+        const pages = getCurrentPages();
+        if (pages.length > 1) {
+          wx.navigateBack();
+        } else {
+          wx.switchTab({
+            url: '/pages/welcome/welcome'
+          });
+        }
       }, 2000);
       
     } catch (err) {

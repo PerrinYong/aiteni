@@ -57,7 +57,17 @@ Page({
    * 开始评测
    */
   startTest() {
-    // 检查是否有未完成的评测
+    // 检查是否已登录
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      // 未登录，跳转到登录页面
+      wx.navigateTo({
+        url: '/pages/login/login?from=welcome'
+      });
+      return;
+    }
+
+    // 已登录，检查是否有未完成的评测
     const savedAnswers = wx.getStorageSync('current_answers');
     const savedStage = wx.getStorageSync('current_stage');
     

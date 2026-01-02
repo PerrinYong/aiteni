@@ -7,6 +7,29 @@
   align-items: center;
   padding: 60rpx 40rpx 40rpx;
   box-sizing: border-box;
+  position: relative;
+}
+
+/* 返回按钮 */
+.back-btn {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 36rpx;
+  color: var(--text-main);
+  font-weight: 300;
 }
 
 /* 头部 */
@@ -52,7 +75,50 @@
   color: var(--text-sub);
 }
 
-/* 登录表单 */
+/* 登录提示（第一阶段） */
+.login-prompt {
+  width: 100%;
+  margin-top: 60rpx;
+}
+
+.prompt-card {
+  text-align: center;
+  padding: 80rpx 48rpx;
+}
+
+.prompt-icon {
+  font-size: 100rpx;
+  margin-bottom: 32rpx;
+}
+
+.prompt-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 16rpx;
+}
+
+.prompt-desc {
+  font-size: 28rpx;
+  color: var(--text-sub);
+  line-height: 1.6;
+  margin-bottom: 48rpx;
+}
+
+.login-start-btn {
+  width: 100%;
+  margin-bottom: 24rpx;
+}
+
+.cancel-btn {
+  width: 100%;
+}
+
+/* 登录表单（第二阶段） */
+.login-form-wrapper {
+  width: 100%;
+}
+
 .login-form {
   width: 100%;
   padding: 48rpx 32rpx;
@@ -166,6 +232,89 @@
   align-items: center;
   line-height: 1.6;
   font-size: 24rpx;
+}
+
+/* 隐私协议弹窗 */
+.privacy-modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.privacy-modal {
+  width: 600rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.privacy-modal-title {
+  padding: 40rpx 32rpx 24rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+}
+
+.privacy-modal-content {
+  padding: 0 32rpx 32rpx;
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: var(--text-main);
+}
+
+.privacy-text {
+  color: var(--text-main);
+}
+
+.privacy-link {
+  color: var(--primary-blue);
+  font-weight: 500;
+  text-decoration: underline;
+  margin: 0 4rpx;
+}
+
+.privacy-modal-footer {
+  display: flex;
+  border-top: 1rpx solid var(--border-gray);
+}
+
+.privacy-modal-btn {
+  flex: 1;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+.privacy-modal-btn.cancel {
+  color: var(--text-sub);
+  border-right: 1rpx solid var(--border-gray);
+}
+
+.privacy-modal-btn.confirm {
+  color: var(--primary-blue);
 }
 
 .agreement-text {
